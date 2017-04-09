@@ -11,6 +11,7 @@ import {
 
 import Feed from './Feed';
 import Search from './Search';
+import Clock from './ClockContainer';
 
 class AppContainer extends Component {
     constructor(props){
@@ -53,6 +54,22 @@ class AppContainer extends Component {
                     initialRoute={{
                         component: Search,
                         title: 'Search'
+                    }}
+                />
+            </TabBarIOS.Item>
+            <TabBarIOS.Item
+                title="Clock"
+                selected={this.state.selectedTab == 'clock'}
+                icon={require('./img/search.png')}
+                onPress={()=> this.setState({selectedTab: 'clock'})}
+            >
+                <NavigatorIOS
+                    style={{
+                        flex: 1
+                    }}
+                    initialRoute={{
+                        component: Clock,
+                        title: 'Clock'
                     }}
                 />
             </TabBarIOS.Item>
