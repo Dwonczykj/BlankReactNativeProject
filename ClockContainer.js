@@ -15,7 +15,7 @@ export default class extends React.Component {
     this.state = {
       date: new Date(),
       alarm1: null,
-      ringAlarm: true
+      ringAlarm: false
     }
     this.addAlarm = this.addAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
@@ -41,9 +41,7 @@ export default class extends React.Component {
   }
 
   tick() {
-    console.log(this.state.alarm1);
-    console.log(this.state.date);
-    if(this.state.alarm1 && this.state.date.getTime() == this.state.alarm1.getTime())
+    if(this.state.alarm1 && Math.abs(this.state.date - this.state.alarm1) < 1000)
     {
       debugger;
       return this.setState({
