@@ -1,5 +1,4 @@
 import React from 'react';
-import AnalogClock from 'react-native-analog-clock';
 
 import {
   StyleSheet,
@@ -43,7 +42,6 @@ export default class extends React.Component {
   tick() {
     if(this.state.alarm1 && Math.abs(this.state.date - this.state.alarm1) < 1000)
     {
-      debugger;
       return this.setState({
         date: new Date(),
         ringAlarm: true

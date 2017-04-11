@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableHighlight,
   View
-} from 'react-native'
+} from 'react-native';
 
 class JourneyTimerContainer extends React.Component {
   constructor(props){
@@ -25,31 +25,33 @@ class JourneyTimerContainer extends React.Component {
   }
 
   calcJourneyTime(){
-    let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.lat}%2C+${this.state.start.lon}&endcoord=${this.state.end.lat}%2C+${this.state.end.lon}&key=775a1097e1a1565c121e594df7b9387b`;
+    let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start}&endcoord=${this.state.end}&key=775a1097e1a1565c121e594df7b9387b`;
     this.setState({showProgress: true});
 
     fetch(request)
-    .then((response)=> {
-        if(response.status >= 200 && response.status < 300){
-            return response;
-        }
-
-        throw {
-            badCredentials: response.status == 401,
-            unknownError: response.status != 401
-        }
-    })
-    .then((response)=> {
-        return response.json();
-    })
-    .then((results)=> {
+      .then((response)=> {
         debugger;
-        this.setState({journeyTime: results["travel_time_minutes"],showProgress:false})
-    })
-    .catch((err)=> {
-        this.setState({showProgress: false, error: err});
-        return cb(err);
-    });
+          if(response.status >= 200 && response.status < 300){
+              return response;
+          }
+
+          throw {
+              badCredentials: response.status == 401,
+              unknownError: response.status != 401
+          }
+      })
+      .then((response)=> {
+          return response.json();
+      })
+      .then((results)=> {
+          debugger;
+          this.setState({journeyTime: results["travel_time_minutes"],showProgress:false})
+      })
+      .catch((err)=> {
+        debugger;
+          this.setState({showProgress: false, error: err});
+          return cb(err);
+      });
   }
 
   render(){
