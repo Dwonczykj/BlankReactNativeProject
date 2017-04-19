@@ -152,12 +152,6 @@ export default class extends React.Component {
         <View
           style={styles.container}
         >
-          <AnalogClock
-            style={styles.clock}
-            onTimeChange={
-              ({hours, minutes, seconds}) => console.log(`time is now : ${hours}:${minutes}:${seconds}`)
-            }
-          />
           <TouchableHighlight
               onPress={() => console.log("Hey there Joey!")}
               style={styles.button}>
