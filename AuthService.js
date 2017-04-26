@@ -56,12 +56,12 @@ export const login = (creds, cb) => {
             return response.json();
         })
         .then((results)=> {
-            debugger;
-            AsyncStorage.multiSet({
-                [authKey]: encodedAuth,
-                [userKey]: JSON.stringify(results)
-            }, (err)=> {
+            AsyncStorage.multiSet([
+                [authKey, encodedAuth],
+                [userKey, JSON.stringify(results)]
+            ], (err)=> {
                 if(err){
+                    debugger;
                     throw err;
                 }
 
