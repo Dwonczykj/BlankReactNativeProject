@@ -1,6 +1,7 @@
 package com.blankreactnativeproject;
 
 import com.facebook.react.ReactActivity;
+import com.corbt.keepawake.KCKeepAwakePackage;
 
 public class MainActivity extends ReactActivity {
 

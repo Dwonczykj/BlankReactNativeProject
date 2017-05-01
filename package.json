@@ -12,8 +12,8 @@
     "moment": "^2.18.1",
     "react": "16.0.0-alpha.6",
     "react-native": "0.43.2",
-    "react-native-analog-clock": "^0.2.1",
     "react-native-keep-awake": "^2.0.3",
+    "react-native-maps": "^0.14.0",
     "react-timer-mixin": "^0.13.3"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
 import React from 'react';
-// import MapView from 'react-native-maps';
+import MapView from 'react-native-maps';
 
 import {
   ActivityIndicator,
@@ -15,6 +15,8 @@ export default class MapContainer extends React.Component {
     super(props);
 
     this.state = this.getInitialState();
+
+    this.onRegionChange = this.onRegionChange.bind(this);
   }
 
   getInitialState() {
@@ -32,11 +34,16 @@ export default class MapContainer extends React.Component {
     this.setState({ region });
   }
 
+  // provider={MapView.PROVIDER_GOOGLE}
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Map Container</Text>
-      </View>
+      <MapView
+        region={this.state.region}
+        onRegionChange={this.onRegionChange}
+
+        style={StyleSheet.absoluteFill}
+      />
     );
   }
 }
@@ -54,9 +61,10 @@ var styles = StyleSheet.create({
         height:55
     },
     heading: {
-        fontSize: 30,
-        margin: 10,
-        marginBottom: 20
+
+        marginTop: 100,
+        backgroundColor: "#f00",
+        padding: 100
     },
     loginInput: {
         height: 50,
