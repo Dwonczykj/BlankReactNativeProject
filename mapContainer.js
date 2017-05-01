@@ -17,21 +17,43 @@ export default class MapContainer extends React.Component {
     this.state = this.getInitialState();
 
     this.onRegionChange = this.onRegionChange.bind(this);
+    this.addMarker = this.addMarker.bind(this);
+    this.onPress = this.onPress.bind(this);
   }
 
   getInitialState() {
     return {
       region: {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 51.444075,
+        longitude: -0.160629,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
+      markers: []
     };
   }
 
   onRegionChange(region) {
     this.setState({ region });
+  }
+
+  addMarker(coordinate){
+    debugger;
+    let markers = this.state.markers;
+    markers = [...markers,coordinate];
+    this.setState({ markers: markers });
+  }
+
+  onPress(event){
+    if(this.props.onPress)
+    {
+      return this.props.onPress(event.nativeEvent.coordinate);
+    }
+    else
+    {
+      console.log(`The uses pressed: {Latitude: ${event.nativeEvent.coordinate.latitude},Longitude: ${event.nativeEvent.coordinate.longitude}}`);
+    }
+    debugger;
   }
 
   // provider={MapView.PROVIDER_GOOGLE}
@@ -41,9 +63,20 @@ export default class MapContainer extends React.Component {
       <MapView
         region={this.state.region}
         onRegionChange={this.onRegionChange}
-
         style={StyleSheet.absoluteFill}
-      />
+        onPress={this.onPress}
+        onSelect={this.addMarker}
+        showsTraffic
+
+      >
+      {this.state.markers.map(marker => (
+        <MapView.Marker
+          coordinate={marker.latlng}
+          title={marker.title}
+          description={marker.description}
+        />
+      ))}
+      </MapView>
     );
   }
 }

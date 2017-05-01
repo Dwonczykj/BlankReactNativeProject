@@ -1,4 +1,5 @@
 import React from 'react';
+import MapContainer from './mapContainer';
 
 import {
   ActivityIndicator,
@@ -22,10 +23,14 @@ class JourneyTimerContainer extends React.Component {
     }
 
     this.calcJourneyTime = this.calcJourneyTime.bind(this);
+    this.addStartMarker = this.addStartMarker.bind(this);
+    this.addEndMarker = this.addEndMarker.bind(this);
+    this.startMarkerAdded = this.startMarkerAdded.bind(this);
+    this.endMarkerAdded = this.endMarkerAdded.bind(this);
   }
 
   calcJourneyTime(){
-    let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start}&endcoord=${this.state.end}&key=775a1097e1a1565c121e594df7b9387b`;
+    let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&key=775a1097e1a1565c121e594df7b9387b`;
     this.setState({showProgress: true});
 
     fetch(request)
@@ -54,6 +59,36 @@ class JourneyTimerContainer extends React.Component {
       });
   }
 
+  startMarkerAdded(coordinate){
+    debugger;
+    this.props.navigator.pop();
+    this.setState({start: coordinate});
+  }
+
+  endMarkerAdded(coordinate){
+    debugger;
+    this.props.navigator.pop();
+    this.setState({end: coordinate});
+  }
+
+  addStartMarker(){
+    this.props.navigator.push({
+        title: 'Start Coordinate',
+        component: MapContainer,
+        passProps: {onPress: this.startMarkerAdded}
+        // passProps: { data: 'some-data' },
+    });
+
+  }
+
+  addEndMarker(){
+    this.props.navigator.push({
+        title: 'End Coordinate',
+        component: MapContainer,
+        passProps: {onPress: this.endMarkerAdded}
+    });
+  }
+
   render(){
     return (
       <View>
@@ -61,11 +96,23 @@ class JourneyTimerContainer extends React.Component {
         <TextInput
             onChangeText={(text)=> this.setState({start: text})}
             style={styles.loginInput}
-            placeholder="Start Coordinate"></TextInput>
+            placeholder="Start Coordinate">
+        </TextInput>
         <TextInput
             onChangeText={(text)=> this.setState({end: text})}
             style={styles.loginInput}
-            placeholder="End Coordinate"></TextInput>
+            placeholder="End Coordinate">
+        </TextInput>
+        <TouchableHighlight
+            onPress={this.addStartMarker}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Add Start</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+            onPress={this.addEndMarker}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Add End</Text>
+        </TouchableHighlight>
         <TouchableHighlight
             onPress={this.calcJourneyTime}
             style={styles.button}>
