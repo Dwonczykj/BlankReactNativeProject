@@ -14,13 +14,14 @@ import Search from './Search';
 import Clock from './ClockContainer';
 import JourneyTimerContainer from './JourneyTimerContainer';
 import MapContainer from './mapContainer';
+import Alarm from './AlarmContainer';
 
 class AppContainer extends Component {
     constructor(props){
         super(props);
 
         this.state = {
-            selectedTab: 'feed'
+            selectedTab: 'Geolarm Clock'
         }
     }
 
@@ -28,18 +29,18 @@ class AppContainer extends Component {
       return (
         <TabBarIOS style={styles.container}>
             <TabBarIOS.Item
-                title="Feed"
-                selected={this.state.selectedTab == 'feed'}
+                title="Geolarm Clock"
+                selected={this.state.selectedTab == 'Geolarm Clock'}
                 icon={require('./img/inbox.png')}
-                onPress={()=> this.setState({selectedTab: 'feed'})}
+                onPress={()=> this.setState({selectedTab: 'Geolarm Clock'})}
             >
                 <NavigatorIOS
                     style={{
                         flex: 1
                     }}
                     initialRoute={{
-                        component: Feed,
-                        title: 'Feed'
+                        component: Alarm,
+                        title: 'Geolarm Clock'
                     }}
                 />
             </TabBarIOS.Item>

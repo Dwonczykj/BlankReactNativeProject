@@ -53,7 +53,7 @@ export default class extends React.Component {
     }
   }
 
-  addAlarm(date){
+  addAlarm(){
     let t = new Date();
     const parsedDate = new Date(t.getTime() + 10000);//t.setSeconds(t.getSeconds() + 10);
     this.setState({alarm1: parsedDate});
