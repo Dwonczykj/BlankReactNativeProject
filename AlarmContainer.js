@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import Heading from './Common/Header';
+import MapContainer from './mapContainer';
 
 export default class extends React.Component {
   constructor(props){
@@ -19,13 +20,17 @@ export default class extends React.Component {
       dateMode: "datetime",
       alarm1: null,
       ringAlarm: false,
-      timeZoneOffsetInHours: this.props.timeZoneOffsetInHours
+      timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
+      start: null,
+      end: null
     }
     this.addAlarm = this.addAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
     this.setDateMode = this.setDateMode.bind(this);
     this.onDateChange = this.onDateChange.bind(this);
     this.addJourney = this.addJourney.bind(this);
+    this.addStartToJourney = this.addStartToJourney.bind(this);
+    this.addEndToJourney = this.addEndToJourney.bind(this);
   }
 
   static defaultProps = {
@@ -98,11 +103,29 @@ export default class extends React.Component {
     this.setState({dateMode: mode});
   }
 
+  addStartToJourney(coordinate){
+    // this.props.navigator.pop();
+    this.setState({start: coordinate});
+  }
+
+  addEndToJourney(coordinate){
+    // this.props.navigator.pop();
+    this.setState({end: coordinate});
+  }
+
+  finishJourneySetUp(){
+    this.props.navigator.pop();
+  }
+
   addJourney(){
     this.props.navigator.push({
         title: 'Journey Planner',
         component: MapContainer,
-        passProps: {onPress: this.endMarkerAdded}
+        passProps: {
+          onStart: this.addStartToJourney, //use the mapView on Select method.
+          onEnd: this.addEndToJourney,
+          complete: this.finishJourneySetUp
+        }
     });
   }
 
