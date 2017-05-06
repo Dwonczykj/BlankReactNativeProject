@@ -142,8 +142,6 @@ export default class extends React.Component {
   }
 
   addArrivalTimeToJourney(){
-    let x = this.state.datePickerDate;
-    debugger;
     this.setState({arrivalTime: this.state.datePickerDate, addingArrivalTime: false});
   }
 
@@ -158,8 +156,7 @@ export default class extends React.Component {
 
   formatISOForURL(isoString)
   {
-    //do some regex to return the iso string with : converted to %3A
-    throw new exception();
+    return isoString.replace(/:/i, '%3A').replace(/:/i, '%3A');
   }
 
   calculateJourneyTime(){
@@ -167,8 +164,8 @@ export default class extends React.Component {
     let time = arrTime || new Date();
     if(this.state.start && this.state.end)
     {
-      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&time={formatISOForURL(time.toISOString())}2014-11-06T19%3A00%3A02-0500&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
-"https://developer.citymapper.com/api/1/traveltime/?startcoord=51.525246%2C0.084672&endcoord=51.559098%2C0.074503&time=2014-11-06T19%3A00%3A02-0500&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b"
+      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
+      console.log(request);
       this.setState({showProgress: true});
 
       fetch(request)
