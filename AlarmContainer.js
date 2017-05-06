@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+  ActivityIndicator,
   DatePickerIOS,
   StyleSheet,
   Text,
@@ -15,6 +16,7 @@ export default class extends React.Component {
     super(props);
 
     this.state = {
+      showProgress: false,
       mydate: this.props.date,
       datePickerDate: new Date(),
       dateMode: "datetime",
@@ -22,7 +24,8 @@ export default class extends React.Component {
       ringAlarm: false,
       timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
       start: null,
-      end: null
+      end: null,
+      journeyTime: -1
     }
     this.addAlarm = this.addAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
@@ -31,6 +34,8 @@ export default class extends React.Component {
     this.addJourney = this.addJourney.bind(this);
     this.addStartToJourney = this.addStartToJourney.bind(this);
     this.addEndToJourney = this.addEndToJourney.bind(this);
+    this.finishJourneySetUp = this.finishJourneySetUp.bind(this);
+    this.calculateJourneyTime = this.calculateJourneyTime.bind(this);
   }
 
   static defaultProps = {
@@ -117,6 +122,41 @@ export default class extends React.Component {
     this.props.navigator.pop();
   }
 
+  calculateJourneyTime(){
+    if(this.state.start && this.state.end)
+    {
+      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&key=775a1097e1a1565c121e594df7b9387b`;
+      this.setState({showProgress: true});
+
+      fetch(request)
+        .then((response)=> {
+            if(response.status >= 200 && response.status < 300){
+                return response;
+            }
+
+            throw {
+                badCredentials: response.status == 401,
+                unknownError: response.status != 401
+            }
+        })
+        .then((response)=> {
+            return response.json();
+        })
+        .then((results)=> {
+            this.setState({journeyTime: results["travel_time_minutes"],showProgress:false})
+        })
+        .catch((err)=> {
+          debugger;
+            this.setState({showProgress: false, error: err});
+            return cb(err);
+        });
+    }else
+    {
+      //return start and end not set yet.
+      this.setState({journeyTime: "Start and End need to be set!"})
+    }
+  }
+
   addJourney(){
     this.props.navigator.push({
         title: 'Journey Planner',
@@ -124,11 +164,14 @@ export default class extends React.Component {
         passProps: {
           onStart: this.addStartToJourney, //use the mapView on Select method.
           onEnd: this.addEndToJourney,
-          complete: this.finishJourneySetUp
+          complete: this.finishJourneySetUp,
+          start: this.state.start,
+          end: this.state.end
         }
     });
   }
 
+  //make calc journey button readonly unless jounery params are set.
   render(){
       return (
         <View
@@ -144,6 +187,7 @@ export default class extends React.Component {
           <Text style={styles.error}>It is {this.state.mydate.toLocaleString()}.</Text>
           <Text style={styles.error}>Alarm will be set to: {this.state.datePickerDate.toLocaleString()}.</Text>
           <Text style={styles.error}>Alarm @: {this.state.alarm1? this.state.alarm1.toLocaleString(): "not set yet"}.</Text>
+          <Text style={styles.success}>Journey Length: {this.state.journeyTime.toString()}</Text>
           {this.state.ringAlarm && <Text style={styles.error}>Alarm is ringing!!!</Text>}
           <TouchableHighlight
               onPress={this.addAlarm}
@@ -162,6 +206,16 @@ export default class extends React.Component {
               style={styles.button}>
               <Text style={styles.buttonText}>Select Journey</Text>
           </TouchableHighlight>
+          <TouchableHighlight
+              onPress={this.calculateJourneyTime}
+              style={styles.button}>
+              <Text style={styles.buttonText}>Calculate Journey</Text>
+          </TouchableHighlight>
+          {this.state.showProgress && <ActivityIndicator
+              animating={this.state.showProgress}
+              size="large"
+              style={styles.loader}
+              />}
         </View>
       );
   }
@@ -212,5 +266,9 @@ let styles = StyleSheet.create({
     error: {
         color: 'red',
         paddingTop: 10
-    }
+    },
+    success: {
+        color: 'green',
+        paddingTop: 10
+    },
 });

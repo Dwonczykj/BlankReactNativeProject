@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "start": "REACT_DEBUGGER=open 'rndebugger://set-debugger-loc?port=8082' || node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "postinstall": "rndebugger-open"
   },
   "dependencies": {
     "buffer": "5.0.6",
