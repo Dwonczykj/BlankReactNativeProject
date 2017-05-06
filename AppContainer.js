@@ -14,7 +14,7 @@ import Search from './Search';
 import Clock from './ClockContainer';
 import JourneyTimerContainer from './JourneyTimerContainer';
 import MapContainer from './mapContainer';
-import Alarm from './AlarmContainer';
+import Alarm from './AlarmContainer2';
 
 class AppContainer extends Component {
     constructor(props){

@@ -20,14 +20,17 @@ export default class extends React.Component {
       mydate: this.props.date,
       datePickerDate: new Date(),
       dateMode: "datetime",
+      addingAlarm: false,
+      addingArrivalTime: false,
       alarm1: null,
       ringAlarm: false,
       timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
       arrivalTime: null,
       start: null,
       end: null,
-      journeyTime: -1
+      journeyTime: "()"
     }
+    //TODO: create a binder function which takes an array of functions as the parameter.
     this.addAlarm = this.addAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
     this.setDateMode = this.setDateMode.bind(this);
@@ -38,6 +41,10 @@ export default class extends React.Component {
     this.finishJourneySetUp = this.finishJourneySetUp.bind(this);
     this.calculateJourneyTime = this.calculateJourneyTime.bind(this);
     this.addArrivalTimeToJourney = this.addArrivalTimeToJourney.bind(this);
+    this.startAddingAlarm = this.startAddingAlarm.bind(this);
+    this.startAddingJourneyDestTime = this.startAddingJourneyDestTime.bind(this);
+    this.deleteAlarm = this.deleteAlarm.bind(this);
+    this.deleteJourneyTime = this.deleteJourneyTime.bind(this);
   }
 
   static defaultProps = {
@@ -90,15 +97,29 @@ export default class extends React.Component {
     this.setState({timeZoneOffsetInHours: offset});
   };
 
+  startAddingAlarm(){
+    this.setState({addingAlarm: true});
+  }
+
+  startAddingJourneyDestTime(){
+    this.setState({addingArrivalTime: true});
+  }
+
   addAlarm(){
+    this.setState({addingAlarm: false});
     let t = this.state.datePickerDate;
     this.setState({alarm1: t});
     console.log(`alarm added for ${t}`);
   }
 
+  deleteAlarm(){
+    this.setState({addingAlarm: false, alarm1: null});
+  }
+
   stopAlarm(){
     this.setState({
-      ringAlarm: false
+      ringAlarm: false,
+      alarm1: null
     })
   }
 
@@ -120,11 +141,16 @@ export default class extends React.Component {
     this.setState({end: coordinate});
   }
 
-  addArrivalTimeToJourney(datetime){
-    this.setState({arrivalTime: datetime});
+  addArrivalTimeToJourney(){
+    this.setState({arrivalTime: this.state.datePickerDate, addingArrivalTime: false});
+  }
+
+  deleteJourneyTime(){
+    this.setState({addingArrivalTime: false, arrivalTime: null});
   }
 
   finishJourneySetUp(){
+    this.calculateJourneyTime();
     this.props.navigator.pop();
   }
 
@@ -183,29 +209,36 @@ export default class extends React.Component {
         <View
           style={styles.container}
         >
-          <DatePickerIOS
+        {!this.state.addingArrivalTime && <TouchableHighlight
+            onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+            style={styles.button}>
+            <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
+        </TouchableHighlight>}
+        {!this.state.addingAlarm && <TouchableHighlight
+            onPress={this.state.addingArrivalTime?this.addArrivalTimeToJourney:this.startAddingJourneyDestTime}
+            style={styles.button}>
+            <Text style={styles.buttonText}>{this.state.addingArrivalTime?"Set Destination Time":"Add Destination Time"}</Text>
+        </TouchableHighlight>}
+        {this.state.addingAlarm && <TouchableHighlight
+            onPress={this.deleteAlarm}
+            style={styles.buttondanger}>
+            <Text style={styles.buttonText}>Delete Alarm</Text>
+        </TouchableHighlight>}
+        {this.state.addingArrivalTime && <TouchableHighlight
+            onPress={this.deleteJourneyTime}
+            style={styles.buttondanger}>
+            <Text style={styles.buttonText}>Delete Destination Time</Text>
+        </TouchableHighlight>}
+          {(this.state.addingAlarm || this.state.addingArrivalTime) && (<DatePickerIOS
             date={this.state.datePickerDate}
             mode={this.state.dateMode}
             timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
             onDateChange={this.onDateChange}
             style={styles.datePicker}
-          />
-          <Text style={styles.error}>It is {this.state.mydate.toLocaleString()}.</Text>
-          <Text style={styles.error}>Alarm will be set to: {this.state.datePickerDate.toLocaleString()}.</Text>
+          />)}
           <Text style={styles.error}>Alarm @: {this.state.alarm1? this.state.alarm1.toLocaleString(): "not set yet"}.</Text>
-          <Text style={styles.success}>Journey Length: {this.state.journeyTime.toString()}</Text>
-          {this.state.ringAlarm && <Text style={styles.error}>Alarm is ringing!!!</Text>}
-          <TouchableHighlight
-              onPress={this.addAlarm}
-              style={styles.button}>
-              <Text style={styles.buttonText}>Add Alarm</Text>
-          </TouchableHighlight>
-
-          <TouchableHighlight
-              onPress={this.stopAlarm}
-              style={styles.button}>
-              <Text style={styles.buttonText}>Stop Alarm</Text>
-          </TouchableHighlight>
+          <Text style={styles.error}>Destination arrival @: {this.state.arrivalTime? this.state.arrivalTime.toLocaleString(): "not set yet"}.</Text>
+          <Text style={styles.success}>Expected Journey Length Now: {this.state.journeyTime.toString()} minutes</Text>
 
           <TouchableHighlight
               onPress={this.addJourney}
@@ -215,7 +248,7 @@ export default class extends React.Component {
           <TouchableHighlight
               onPress={this.calculateJourneyTime}
               style={styles.button}>
-              <Text style={styles.buttonText}>Calculate Journey</Text>
+              <Text style={styles.buttonText}>Recalculate Journey</Text>
           </TouchableHighlight>
           {this.state.showProgress && <ActivityIndicator
               animating={this.state.showProgress}
@@ -261,6 +294,16 @@ let styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5
+    },
+    buttondanger: {
+      height: 50,
+      backgroundColor: '#ec4874',
+      borderColor: '#48BBEC',
+      alignSelf: 'stretch',
+      marginTop: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 5
     },
     buttonText: {
         color: '#fff',
