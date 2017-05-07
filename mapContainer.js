@@ -1,5 +1,6 @@
 import React from 'react';
 import MapView from 'react-native-maps';
+import MapSearchBox from './mapSearchBox';
 
 import {
   ActivityIndicator,
@@ -11,7 +12,15 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import PriceMarker from './PriceMarker';
 
+const { width, height } = Dimensions.get('window');
+
+const ASPECT_RATIO = width / height;
+const LATITUDE = 37.78825;
+const LONGITUDE = -122.4324;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 let id = 0;
 
 let initialRegion = {
@@ -20,6 +29,11 @@ let initialRegion = {
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421,
 };
+
+let defaults = {
+  latitudeDelta: 0.0922,
+  longitudeDelta: 0.0421
+}
 
 export default class MapContainer extends React.Component {
   constructor(props){
@@ -47,13 +61,11 @@ export default class MapContainer extends React.Component {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
+      events: [],
       markers: [],
       journeyMarkers: [],
-      selectingStartLocation: true,
-      random: true
+      selectingStartLocation: true
     };
-
-    console.log(this.state.region);
 
     this.onRegionChange = this.onRegionChange.bind(this);
     this.addMarker = this.addMarker.bind(this);
@@ -61,15 +73,15 @@ export default class MapContainer extends React.Component {
     this.onLongPress = this.onLongPress.bind(this);
     this.switchToStartChooser =this.switchToStartChooser.bind(this);
     this.switchToEndChooser =this.switchToEndChooser.bind(this);
+    this.moveToAndAddMarkerAt = this.moveToAndAddMarkerAt.bind(this);
+    this.makeMarkerAJourneyMarker = this.makeMarkerAJourneyMarker.bind(this);
   }
 
   onRegionChange(region) {
-    console.log(region);
     this.setState({ region });
   }
 
   addMarker(event){
-    debugger;
     let markers = this.state.markers;
     let newMarker = {
       key: id++,
@@ -109,10 +121,6 @@ export default class MapContainer extends React.Component {
     {
       return this.props.onPress(event.nativeEvent.coordinate);
     }
-    else
-    {
-      console.log(`The uses pressed: {Latitude: ${event.nativeEvent.coordinate.latitude},Longitude: ${event.nativeEvent.coordinate.longitude}}`);
-    }
   }
 
   onLongPress(event){
@@ -130,14 +138,60 @@ export default class MapContainer extends React.Component {
     }
   }
 
+  makeMarkerAJourneyMarker(markerKey,coordinate){
+    let markers = this.state.markers;
+
+    if(this.state.selectingStartLocation && this.props.onStart)
+    {
+      this.addJourneyMarker(coordinate,true);
+      //make it specific to start//could have a list marker objects which contain the type of marker
+      this.props.onStart(coordinate);
+    }
+    else if(!this.state.selectingStartLocation && this.props.onEnd)
+    {
+      this.addJourneyMarker(coordinate,false);
+      this.props.onEnd(coordinate);
+    }
+    markers = markers.filter(marker => marker.key !== markerKey);
+    return this.setState({markers});
+  }
+
   switchToStartChooser(){
     // this.props.navigator.replace({title: 'Start Location (Work)'});
-    this.setState({selectingStartLocation: true, region: initialRegion});
+    let currentRegion = this.state.region;
+    this.setState({selectingStartLocation: true, region: currentRegion});
   }
 
   switchToEndChooser(){
     // Actions.refresh({title: 'End location (Work)'});
-    this.setState({selectingStartLocation: false});
+    let currentRegion = this.state.region;
+    this.setState({selectingStartLocation: false, region: currentRegion});
+  }
+
+  moveToAndAddMarkerAt(apiResponse){
+    const coordinate = {
+      latitude: apiResponse.geometry.location.lat,
+      longitude: apiResponse.geometry.location.lng
+    };
+    const newMarker = {
+      key: id++,
+      location: coordinate,
+      title: apiResponse.formatted_address
+    }
+    let markers = this.state.markers;
+    markers = [
+      ...markers,
+      newMarker
+    ]
+    this.setState({
+      region: {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        latitudeDelta: defaults.latitudeDelta,
+        longitudeDelta: defaults.longitudeDelta,
+      },
+      markers: markers
+    });
   }
 
   // provider={MapView.PROVIDER_GOOGLE}
@@ -146,6 +200,8 @@ export default class MapContainer extends React.Component {
   //render buttons at the bottom between choosing the start and the end of the journey.
   //add mode of transport on a different screen?
   //button to say complete  which woudl call this.props.complete and maybe do navigation?
+
+  //add a callout after searchinng which says Start Here and is a button. Or End here.
   render() {
     return (
       <View style={styles.container}>
@@ -157,32 +213,72 @@ export default class MapContainer extends React.Component {
           onSelect={this.addMarker}
           onLongPress={this.onLongPress}
           showsTraffic
+          showsMyLocationButton
           loadingEnabled
           loadingIndicatorColor="#3bc91e"
         >
-        {this.state.journeyMarkers.map(marker => {
-          return marker.start != null? (
-            <MapView.Marker
-              key={marker.key}
-              coordinate={marker.location}
-              title={marker.title}
-              description={marker.description}
-              pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
-              style={styles.marker}
-            />
-          )
-          :
-          (
-            <MapView.Marker
-              key={marker.key}
-              coordinate={marker.location}
-              title={marker.title}
-              description={marker.description}
-              style={styles.marker}
-            />
-          )
-        })}
+          {this.state.journeyMarkers.map(marker => {
+            return marker.start != null? (
+              <MapView.Marker
+                key={marker.key}
+                coordinate={marker.location}
+                title={marker.title}
+                description={marker.description}
+                pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
+                style={styles.marker}
+              />
+            )
+            :
+            (
+              <MapView.Marker
+                key={marker.key}
+                coordinate={marker.location}
+                title={marker.title}
+                style={styles.marker}
+              />
+            )
+          })}
+          {this.state.markers.map(marker => {
+            return (
+              // <MapView.Marker
+              //   key={marker.key}
+              //   coordinate={marker.location}
+              //   title={marker.title}
+              //   style={styles.marker}
+              // />
+              <MapView.Marker
+                  key={marker.key}
+                  title={marker.title}
+                  style={styles.marker}
+                  coordinate={marker.location}
+                  onSelect={() => console.log("marker selected")}
+                  onDeselect={() => console.log("marker deselected")}
+              >
+                  <PriceMarker amount={99} />
+                  <MapView.Callout
+                    style={styles.callout}
+
+                    onPress={() => this.makeMarkerAJourneyMarker(marker.key,marker.location)}
+                  >
+                    <View style={styles.callout} >
+                      <Text style={styles.calloutText}>{this.state.selectingStartLocation?'Start':'End'} Here?</Text>
+                    </View>
+                  </MapView.Callout>
+              </MapView.Marker>
+            );
+          })}
         </MapView>
+        <View style={styles.searchBoxContainer}>
+          <MapSearchBox
+            onSearch={this.moveToAndAddMarkerAt}
+            containerStyle={styles.searchBox}
+            inputStyle={styles.searchBoxInput}
+            placeholder={this.state.selectingStartLocation?
+              "Where will your journey begin?":
+              "Where will your journey end?"
+            }
+          />
+        </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             onPress={this.switchToStartChooser}
@@ -299,13 +395,43 @@ var styles = StyleSheet.create({
       paddingVertical: 12,
       borderRadius: 20,
     },
+    calloutButton: {
+      backgroundColor: 'rgba(33, 124, 230, 0.87)',
+      paddingHorizontal: 1,
+      paddingVertical: 1
+    },
     buttonContainer: {
       flexDirection: 'row',
       marginVertical: 50,
       backgroundColor: 'transparent',
     },
+    searchBox: {
+      borderBottomColor: 'transparent',
+      borderTopColor: 'transparent',
+      backgroundColor: 'rgba(104, 249, 227, 0.39)',
+    },
+    searchBoxInput: {
+      backgroundColor: 'rgba(249, 249, 249, 0.73)',
+      color: 'rgb(30, 42, 34)'
+    },
+    searchBoxContainer: {
+      flex: 1,
+      marginTop: 60,
+      marginBottom: 500,
+      height: 90,
+      alignSelf: "stretch"
+    },
     marker: {
-      width: 10,
-      height: 10,
+      width: 25,
+      height: 25,
+    },
+    callout: {
+      width: 200,
+      height: 15,
+      backgroundColor: 'transparent',
+      alignItems: 'center'
+    },
+    calloutText: {
+      backgroundColor: 'transparent'
     }
 });

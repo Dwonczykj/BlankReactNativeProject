@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import Login from './Login';
-import AppContainer from './AppContainer';
+import AppContainer from './AppContainerNoTabs';
 import {getAuthInfo} from './AuthService';
 
 export default class BlankReactNativeProject extends Component {

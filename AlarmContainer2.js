@@ -165,7 +165,6 @@ export default class extends React.Component {
     if(this.state.start && this.state.end)
     {
       let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
-      console.log(request);
       this.setState({showProgress: true});
 
       fetch(request)
