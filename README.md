@@ -3,7 +3,8 @@
 A blank react-native project with a map container and a funky alarm.
 
 To Get Started:
- run npm i rnpm -g
+* Optionally: install the react-native debugger: https://github.com/jhen0409/react-native-debugger
+* run npm i rnpm -g
 * run: npm i at the project route.
 * run: npm run postinstall
 * run: rnpm link --(this is required for react-native-maps see: https://github.com/airbnb/react-native-maps/blob/master/docs/installation.md for android)
