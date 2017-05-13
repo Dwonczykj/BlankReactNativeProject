@@ -9,12 +9,25 @@ import {
   NavigatorIOS
 } from 'react-native';
 
+import { applyMiddleware, createStore, compose } from 'redux';
+import { offline } from 'redux-offline';
+import offlineConfig from 'redux-offline/lib/defaults';
+
 import Feed from './Feed';
 import Search from './Search';
 import Clock from './ClockContainer';
 import JourneyTimerContainer from './JourneyTimerContainer';
 import MapContainer from './mapContainer';
 import Alarm from './AlarmContainer2';
+
+const store = createStore(
+  reducer,
+  preloadedState,
+  compose(
+    applyMiddleware(middleware),
+    offline(offlineConfig)
+  )
+);
 
 class AppContainer extends Component {
     constructor(props){

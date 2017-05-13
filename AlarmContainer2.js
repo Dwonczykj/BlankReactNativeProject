@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {connect} from 'react-redux';
 import {
   ActivityIndicator,
   DatePickerIOS,
@@ -8,10 +8,12 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import AlarmActions from './Actions/alarmActions';
 import Heading from './Common/Header';
 import MapContainer from './mapContainer';
+import newGuid from './Common/Guid';
 
-export default class extends React.Component {
+class AlarmContainer2 extends React.Component {
   constructor(props){
     super(props);
 
@@ -23,6 +25,7 @@ export default class extends React.Component {
       addingAlarm: false,
       addingArrivalTime: false,
       alarm1: null,
+      alarm: this.getInitialAlarm(),
       ringAlarm: false,
       timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
       arrivalTime: null,
@@ -32,6 +35,7 @@ export default class extends React.Component {
     }
     //TODO: create a binder function which takes an array of functions as the parameter.
     this.addAlarm = this.addAlarm.bind(this);
+    this.editAlarm = this.editAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
     this.setDateMode = this.setDateMode.bind(this);
     this.onDateChange = this.onDateChange.bind(this);
@@ -45,6 +49,19 @@ export default class extends React.Component {
     this.startAddingJourneyDestTime = this.startAddingJourneyDestTime.bind(this);
     this.deleteAlarm = this.deleteAlarm.bind(this);
     this.deleteJourneyTime = this.deleteJourneyTime.bind(this);
+  }
+
+  getInitialAlarm(){
+    return {
+      time: null,
+      id: newGuid(),
+      journey: {
+        destination: null,
+        expectedJourneyLength: null,
+        journeyStart: null,
+      },
+      offWhenUpToggle: false
+    };
   }
 
   static defaultProps = {
@@ -108,12 +125,38 @@ export default class extends React.Component {
   addAlarm(){
     this.setState({addingAlarm: false});
     let t = this.state.datePickerDate;
-    this.setState({alarm1: t});
+    let alarm = this.state.alarm;
+    alarm.time = t;
+
+    this.setState({
+      alarm1: t,
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
+    console.log(`alarm added for ${t}`);
+  }
+
+  editAlarm(){
+    this.setState({addingAlarm: false});
+    let t = this.state.datePickerDate;
+    let alarm = this.state.alarm;
+    alarm.time = t;
+    this.setState({
+      alarm1: t,
+      alarm: alarm
+    });
+    debugger;
+    this.props.actions.editAlarm(alarm);
     console.log(`alarm added for ${t}`);
   }
 
   deleteAlarm(){
-    this.setState({addingAlarm: false, alarm1: null});
+    this.state.alarm.id && this.props.actions.deleteAlarm(this.state.alarm.id)
+    this.setState({
+      addingAlarm: false,
+       alarm1: null,
+       alarm: this.getInitialAlarm()
+     });
   }
 
   stopAlarm(){
@@ -133,20 +176,64 @@ export default class extends React.Component {
 
   addStartToJourney(coordinate){
     // this.props.navigator.pop();
-    this.setState({start: coordinate});
+    let alarm = this.state.alarm;
+    alarm.journey.journeyStart = coordinate
+    this.setState({
+      start: coordinate,
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
+  }
+
+  setPropOnObject = (object,prop,value) => {
+    return Object.assign(
+      {},
+      Object.keys(object).filter(key => {
+        return (
+          key !== prop
+        );
+      }).map(key => {
+        return {
+          [key]: object[key]
+        }
+      }),
+      {
+        [prop]:value
+      }
+    );
   }
 
   addEndToJourney(coordinate){
     // this.props.navigator.pop();
-    this.setState({end: coordinate});
+    let alarm = this.state.alarm;
+    alarm.journey.destination = coordinate
+    this.setState({
+      end: coordinate,
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
   }
 
   addArrivalTimeToJourney(){
-    this.setState({arrivalTime: this.state.datePickerDate, addingArrivalTime: false});
+    let alarm = this.state.alarm;
+    alarm.journey.journeyTime = this.state.datePickerDate
+    this.setState({
+      arrivalTime: this.state.datePickerDate,
+      addingArrivalTime: false,
+      alarm: alarm
+     });
+    this.props.actions.editAlarm(alarm);
   }
 
   deleteJourneyTime(){
-    this.setState({addingArrivalTime: false, arrivalTime: null});
+    let alarm = this.state.alarm;
+    alarm.journey.journeyTime = null
+    this.setState({
+      addingArrivalTime: false,
+      arrivalTime: null,
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
   }
 
   finishJourneySetUp(){
@@ -182,7 +269,10 @@ export default class extends React.Component {
             return response.json();
         })
         .then((results)=> {
-            this.setState({journeyTime: results["travel_time_minutes"],showProgress:false})
+            this.setState({journeyTime: results["travel_time_minutes"],showProgress:false});
+            let alarm =  this.state.alarm;
+            alarm.journey.expectedJourneyLength = results["travel_time_minutes"];
+            this.props.actions.editAlarm(alarm);
         })
         .catch((err)=> {
           debugger;
@@ -266,6 +356,24 @@ export default class extends React.Component {
       );
   }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    state: store.alarms
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: AlarmActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AlarmContainer2);
 
 let styles = StyleSheet.create({
     container: {
