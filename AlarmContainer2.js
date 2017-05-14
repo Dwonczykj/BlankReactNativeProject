@@ -60,7 +60,8 @@ class AlarmContainer2 extends React.Component {
         expectedJourneyLength: null,
         journeyStart: null,
       },
-      offWhenUpToggle: false
+      offWhenUpToggle: false,
+      enabled: false
     };
   }
 
@@ -127,6 +128,7 @@ class AlarmContainer2 extends React.Component {
     let t = this.state.datePickerDate;
     let alarm = this.state.alarm;
     alarm.time = t;
+    alarm.enabled = true;
 
     this.setState({
       alarm1: t,

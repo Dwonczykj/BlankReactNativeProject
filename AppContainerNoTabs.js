@@ -36,22 +36,45 @@ const store = configureStore(InitialState);
 // import JourneyTimerContainer from './JourneyTimerContainer';
 // import MapContainer from './mapContainer';
 import Alarm from './AlarmContainer2';
+import AlarmList from './AlarmList';
 
 class AppContainer extends Component {
     constructor(props){
         super(props);
     }
 
+    _handleNavigationRequest() {
+    this.refs.alarmNav.push({
+      component: Alarm,
+      title: 'Add Alarm',
+      passProps: { myProp: 'genius' },
+    });
+  }
+
     render(){
       return (
         <Provider store={store}>
+          {/*<NavigatorIOS
+              style={{
+                  flex: 1
+              }}
+              ref='alarmNav'
+              initialRoute={{
+                  component: Alarm,
+                  title: 'Geolarm Clock'
+              }}
+          />*/}
           <NavigatorIOS
               style={{
                   flex: 1
               }}
+              ref='alarmNav'
+              barTintColor='rgba(2, 7, 115, 0.84)'
               initialRoute={{
-                  component: Alarm,
-                  title: 'Geolarm Clock'
+                  component: AlarmList,
+                  title: 'Geolarm Clock',
+                  rightButtonTitle: 'Add',
+                  onRightButtonPress: () => this._handleNavigationRequest(),
               }}
           />
         </Provider>

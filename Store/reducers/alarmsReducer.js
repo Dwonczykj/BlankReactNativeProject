@@ -19,7 +19,7 @@ export const alarms = (state = InitialState.alarms, action) => {
     case types.ALARM_CHANGED:
         return Object.assign(
           {},
-          Object.keys(state).filter(alarmId => alarmId !== action.payload.alarm.id)
+          ...Object.keys(state).filter(alarmId => alarmId !== action.payload.alarm.id)
             .map(alarmId => {
               return {
                 [alarmId]: state[alarmId]
@@ -37,7 +37,7 @@ export const alarms = (state = InitialState.alarms, action) => {
     case types.ALARM_DELETED:
         return Object.assign(
           {},
-          Object.keys(state)
+          ...Object.keys(state)
             .filter(alarmId => alarmId !== action.payload.alarm.id)
             .map(alarmId => {
               return {
