@@ -8,8 +8,10 @@ import {
   ListView,
   ActivityIndicator,
   Image,
+  Switch,
   TouchableHighlight
 } from 'react-native';
+import AlarmActions from './Actions/alarmActions';
 import AlarmContainer from './AlarmContainer2';
 import {getAuthInfo} from './AuthService';
 
@@ -21,7 +23,7 @@ class AlarmList extends React.Component {
         super(props);
 
         var ds = new ListView.DataSource({
-            rowHasChanged: (r1, r2) => r1 != r2
+            rowHasChanged: (r1, r2) => r1 !== r2
         });
 
         this.state = {
@@ -53,7 +55,8 @@ class AlarmList extends React.Component {
       {
         alarms = nextProps.alarms;
       }
-
+      console.log(this.state.dataSource
+        .cloneWithRows(Object.values(alarms)/*,Object.keys(alarms)*/));
       this.setState({
         alarms: alarms,
         dataSource: this.state.dataSource
@@ -72,7 +75,14 @@ class AlarmList extends React.Component {
         });
     }
 
-    renderRow(rowData){
+    toggleChange(rowData,newValue){
+      let alarms = this.props.alarms;
+      const updatedAlarm = Object.values(alarms).find(alarm => alarm.id === rowData.id);
+      updatedAlarm.enabled = newValue;
+      this.props.actions.editAlarm(updatedAlarm);
+    }
+
+    renderRow(rowData, sectionID, rowID, highlightRow){
         return rowData ? (
             <TouchableHighlight
                 onPress={()=> this.pressRow(rowData)}
@@ -85,7 +95,8 @@ class AlarmList extends React.Component {
                     alignItems: 'center',
                     borderColor: '#D7D7D7',
                     borderBottomWidth: 1,
-                    backgroundColor: '#00f'
+                    backgroundColor: "rgba(52, 48, 70, 0.92)",
+
                 }}>
                     {/*}<Image
                         source={{uri: rowData.actor.avatar_url}}
@@ -97,27 +108,54 @@ class AlarmList extends React.Component {
                     />*/}
 
                     <View style={{
-                        paddingLeft: 20
+                        paddingLeft: 20,
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+
                     }}>
-                        <Text>
-                            {rowData.time.toDateString()}
+                        <Text style={{
+                            fontWeight: '600',
+                            fontSize: 32,
+                            color: "rgba(228, 122, 11, 0.78)"
+                        }}>
+                            {rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`}
                         </Text>
-                        <Text>
-                            <Text style={{
-                                fontWeight: '600'
-                            }}>{/*rowData.journey.destination*/}</Text> will take
-                        </Text>
-                        <Text>
-                          {
-                              /*rowData.payload.ref.replace('refs/heads/', '')*/
-                              /*rowData.journey.expectedJourneyLength*/
-                          }
-                        </Text>
-                        <Text>
-                            at <Text style={{
-                                fontWeight: '600'
-                            }}>{rowData.enabled?"true":"false"}</Text>
-                        </Text>
+                        <View>
+                          <Text style={{
+                              fontWeight: '300',
+                              fontSize: 11,
+                              color: "rgba(247, 198, 146, 0.86)"
+                          }}>
+                              <Text style={{
+                                  fontWeight: '300',
+                                  fontSize: 10,
+                                  color: "rgba(228, 122, 11, 0.78)"
+                              }}>{rowData.journey &&
+                                rowData.journey.destination &&
+                                rowData.journey.destination.info[0].feature
+                               }</Text>
+
+                          </Text>
+                          <Text style={{
+                              fontWeight: '600',
+                              fontSize: 18,
+                              color: "rgba(204, 3, 33, 0.78)"
+                          }}>
+                            {
+                                /*rowData.payload.ref.replace('refs/heads/', '')*/
+                                rowData.journey &&
+                                rowData.journey.expectedJourneyLength &&
+                                `${rowData.journey.expectedJourneyLength.toString()} mins`
+                            }
+                          </Text>
+                        </View>
+                        <Switch
+                          value={rowData.enabled?true:false}
+                          onTintColor="rgba(228, 122, 11, 0.78)"
+                          onValueChange={(value) => this.toggleChange(rowData,value)}
+                        />
 
                     </View>
                 </View>
@@ -194,7 +232,7 @@ const mapStateToProps = (store) =>
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // actions: AlarmActions(dispatch)
+    actions: AlarmActions(dispatch)
   }
 };
 

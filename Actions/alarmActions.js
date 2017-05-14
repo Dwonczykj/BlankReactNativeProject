@@ -3,10 +3,10 @@ import * as types from './actionTypes';
 
 const alarmsActions = (dispatch) => {
 
-  const addAlarm = ( newalarm ) => {
+  const addAlarm = ( alarm ) => {
     return dispatch({
       type: types.ALARM_ADDED,
-      payload: { newalarm },
+      payload: { alarm },
       meta: {
         offline: {
           // the network action to execute:

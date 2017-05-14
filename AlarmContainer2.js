@@ -176,12 +176,12 @@ class AlarmContainer2 extends React.Component {
     this.setState({dateMode: mode});
   }
 
-  addStartToJourney(coordinate){
+  addStartToJourney(location){
     // this.props.navigator.pop();
     let alarm = this.state.alarm;
-    alarm.journey.journeyStart = coordinate
+    alarm.journey.journeyStart = location;
     this.setState({
-      start: coordinate,
+      start: location.coordinate,
       alarm: alarm
     });
     this.props.actions.editAlarm(alarm);
@@ -205,12 +205,12 @@ class AlarmContainer2 extends React.Component {
     );
   }
 
-  addEndToJourney(coordinate){
+  addEndToJourney(location){
     // this.props.navigator.pop();
     let alarm = this.state.alarm;
-    alarm.journey.destination = coordinate
+    alarm.journey.destination = location;
     this.setState({
-      end: coordinate,
+      end: location.coordinate,
       alarm: alarm
     });
     this.props.actions.editAlarm(alarm);
@@ -349,6 +349,11 @@ class AlarmContainer2 extends React.Component {
               style={styles.button}>
               <Text style={styles.buttonText}>Recalculate Journey</Text>
           </TouchableHighlight>
+          {this.state.alarm.time && <TouchableHighlight
+              onPress={() => this.props.navigator.pop()}
+              style={styles.buttonSuccess}>
+              <Text style={styles.buttonText}>Done</Text>
+          </TouchableHighlight>}
           {this.state.showProgress && <ActivityIndicator
               animating={this.state.showProgress}
               size="large"
@@ -416,6 +421,16 @@ let styles = StyleSheet.create({
       height: 50,
       backgroundColor: '#ec4874',
       borderColor: '#48BBEC',
+      alignSelf: 'stretch',
+      marginTop: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 5
+    },
+    buttonSuccess: {
+      height: 50,
+      backgroundColor: '#48ec80',
+      borderColor: '#020608',
       alignSelf: 'stretch',
       marginTop: 10,
       justifyContent: 'center',

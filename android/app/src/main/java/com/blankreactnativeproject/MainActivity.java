@@ -1,6 +1,7 @@
 package com.blankreactnativeproject;
 
 import com.facebook.react.ReactActivity;
+import com.devfd.RNGeocoder.RNGeocoderPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 
 public class MainActivity extends ReactActivity {

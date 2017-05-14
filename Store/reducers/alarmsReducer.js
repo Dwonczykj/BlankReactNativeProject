@@ -38,7 +38,7 @@ export const alarms = (state = InitialState.alarms, action) => {
         return Object.assign(
           {},
           ...Object.keys(state)
-            .filter(alarmId => alarmId !== action.payload.alarm.id)
+            .filter(alarmId => alarmId !== action.payload.alarmId)
             .map(alarmId => {
               return {
                 [alarmId]:state[alarmId]

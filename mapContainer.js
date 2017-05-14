@@ -1,5 +1,6 @@
 import React from 'react';
 import MapView from 'react-native-maps';
+import Geocoder from 'react-native-geocoder';
 import MapSearchBox from './mapSearchBox';
 
 import {
@@ -13,6 +14,8 @@ import {
   View
 } from 'react-native';
 import PriceMarker from './PriceMarker';
+
+Geocoder.fallbackToGoogle("AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c");
 
 const { width, height } = Dimensions.get('window');
 
@@ -77,33 +80,52 @@ export default class MapContainer extends React.Component {
     this.makeMarkerAJourneyMarker = this.makeMarkerAJourneyMarker.bind(this);
   }
 
+  componentDidMount(){
+  }
+
   onRegionChange(region) {
     this.setState({ region });
   }
 
+  convertEventCoordinateToGeocodeCoord(coordinate){
+    return {
+      lat: coordinate.latitude,
+      lng: coordinate.longitude
+    };
+  }
+
   addMarker(event){
+
     let markers = this.state.markers;
     let newMarker = {
       key: id++,
-      location: event.nativeEvent.coordinate,
+      location: null,
       title: "normal",
       description: "yo"
     }
-    markers = [...markers,newMarker];
-    this.setState({ markers: markers });
+    Geocoder.geocodePosition(convertEventCoordinateToGeocodeCoord(event.nativeEvent.coordinate))
+      .then(res => {
+        newMarker.location = res;
+        markers = [...markers,newMarker];
+        this.setState({ markers: markers });
+        return markers;
+      })
+      .catch(res => console.log(res));
+
   }
 
-  addJourneyMarker(coordinate,start)
+  addJourneyMarker(location,start)
   {
     let journeyMarkers = this.state.journeyMarkers;
 
     let newMarker = {
       key: id++,
-      location: coordinate,
+      location: location,
       start: start,
       title: start? "Beginning" : "End",
       description: "hey there"
     }
+
     if(journeyMarkers.some(marker => { return marker.start == start} ))
     {
       journeyMarkers = [
@@ -124,33 +146,56 @@ export default class MapContainer extends React.Component {
   }
 
   onLongPress(event){
-    //TODO: the user needs to see something if this happens.
-    if(this.state.selectingStartLocation && this.props.onStart)
-    {
-      this.addJourneyMarker(event.nativeEvent.coordinate,true);
-      //make it specific to start//could have a list marker objects which contain the type of marker
-      return this.props.onStart(event.nativeEvent.coordinate);
+    const geoloc = {
+      lat: event.nativeEvent.coordinate.latitude,
+      lng: event.nativeEvent.coordinate.longitude
     }
-    else if(!this.state.selectingStartLocation && this.props.onEnd)
-    {
-      this.addJourneyMarker(event.nativeEvent.coordinate,false);
-      return this.props.onEnd(event.nativeEvent.coordinate);
+    const location = {
+      coordinate: event.nativeEvent.coordinate,
+      info: null
     }
+    Geocoder.geocodePosition(geoloc)
+      .then(res => {
+          location.info = res;
+          if(this.state.selectingStartLocation && this.props.onStart)
+          {
+            this.addJourneyMarker(location,true);
+            this.setState({selectingStartLocation: false});
+            //make it specific to start//could have a list marker objects which contain the type of marker
+            return this.props.onStart(location);
+          }
+          else if(!this.state.selectingStartLocation && this.props.onEnd)
+          {
+            this.addJourneyMarker(location,false);
+            this.setState({selectingStartLocation: true});
+            return this.props.onEnd(location);
+          }
+      })
+      .catch(err => console.log(err));//TODO: need error handling in here for user.
+
+    // // Address Geocoding
+    // Geocoder.geocodeAddress('New York').then(res => {
+    //     // res is an Array of geocoding object (see below)
+    // })
+    // .catch(err => console.log(err))
+
+
+
   }
 
-  makeMarkerAJourneyMarker(markerKey,coordinate){
+  makeMarkerAJourneyMarker(markerKey,location){
     let markers = this.state.markers;
 
     if(this.state.selectingStartLocation && this.props.onStart)
     {
-      this.addJourneyMarker(coordinate,true);
+      this.addJourneyMarker(location.coordinate,true);
       //make it specific to start//could have a list marker objects which contain the type of marker
-      this.props.onStart(coordinate);
+      this.props.onStart(location);
     }
     else if(!this.state.selectingStartLocation && this.props.onEnd)
     {
-      this.addJourneyMarker(coordinate,false);
-      this.props.onEnd(coordinate);
+      this.addJourneyMarker(location.coordinate,false);
+      this.props.onEnd(location);
     }
     markers = markers.filter(marker => marker.key !== markerKey);
     return this.setState({markers});
@@ -170,27 +215,34 @@ export default class MapContainer extends React.Component {
 
   moveToAndAddMarkerAt(apiResponse){
     const coordinate = {
-      latitude: apiResponse.geometry.location.lat,
-      longitude: apiResponse.geometry.location.lng
+      lat: apiResponse.geometry.location.lat,
+      lng: apiResponse.geometry.location.lng
     };
     const newMarker = {
       key: id++,
-      location: coordinate,
+      location: null,
       title: apiResponse.formatted_address
-    }
+    };
     let markers = this.state.markers;
-    markers = [
-      ...markers,
-      newMarker
-    ]
+    Geocoder.geocodePosition(convertEventCoordinateToGeocodeCoord(coordinate))
+      .then(res => {
+        newMarker.location = res;
+        markers = [
+          ...markers,
+          newMarker
+        ]
+        this.setState({markers: markers});
+        return markers;
+      })
+      .catch(res => console.log(res));
+
     this.setState({
       region: {
-        latitude: coordinate.latitude,
-        longitude: coordinate.longitude,
+        latitude: coordinate.lat,
+        longitude: coordinate.lng,
         latitudeDelta: defaults.latitudeDelta,
         longitudeDelta: defaults.longitudeDelta,
-      },
-      markers: markers
+      }
     });
   }
 
@@ -207,7 +259,7 @@ export default class MapContainer extends React.Component {
       <View style={styles.container}>
         <MapView
           region={this.state.region}
-          onRegionChange={this.onRegionChange}
+          onRegionChangeComplete={this.onRegionChange}
           style={StyleSheet.absoluteFill}
           onPress={this.onPress}
           onSelect={this.addMarker}
@@ -221,7 +273,7 @@ export default class MapContainer extends React.Component {
             return marker.start != null? (
               <MapView.Marker
                 key={marker.key}
-                coordinate={marker.location}
+                coordinate={marker.location.coordinate}
                 title={marker.title}
                 description={marker.description}
                 pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
@@ -232,7 +284,7 @@ export default class MapContainer extends React.Component {
             (
               <MapView.Marker
                 key={marker.key}
-                coordinate={marker.location}
+                coordinate={marker.location.coordinate}
                 title={marker.title}
                 style={styles.marker}
               />
@@ -250,7 +302,7 @@ export default class MapContainer extends React.Component {
                   key={marker.key}
                   title={marker.title}
                   style={styles.marker}
-                  coordinate={marker.location}
+                  coordinate={marker.location.coordinate}
                   onSelect={() => console.log("marker selected")}
                   onDeselect={() => console.log("marker deselected")}
               >

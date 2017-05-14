@@ -69,11 +69,18 @@ class AppContainer extends Component {
                   flex: 1
               }}
               ref='alarmNav'
-              barTintColor='rgba(2, 7, 115, 0.84)'
+              barTintColor='rgba(19, 20, 29, 0.84)'
+              tintColor="rgb(244, 161, 65)"
+              titleTextColor="rgb(244, 161, 65)"
               initialRoute={{
                   component: AlarmList,
                   title: 'Geolarm Clock',
-                  rightButtonTitle: 'Add',
+                  backButtonTitle: "Done",
+                  rightButtonTitle: '+',
+                  tintColor: "rgb(244, 161, 65)",
+                  barTintColor: 'rgba(19, 20, 29, 0.84)',
+                  titleTextColor: "rgb(244, 161, 65)",
+                  // rightButtonIcon:
                   onRightButtonPress: () => this._handleNavigationRequest(),
               }}
           />
