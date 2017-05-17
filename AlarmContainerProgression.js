@@ -17,17 +17,16 @@ class AlarmContainer2 extends React.Component {
   constructor(props){
     super(props);
 
-    let alarm = this.props.alarm? this.props.alarm : this.getInitialAlarm();
-
     this.state = {
       showProgress: false,
       mydate: this.props.date,
       datePickerDate: new Date(),
       dateMode: "datetime",
-      addingAlarm: false,
+      addingAlarm: true,
       addingArrivalTime: false,
+      showSummary: false,
       alarm1: null,
-      alarm: alarm,
+      alarm: this.getInitialAlarm(),
       currentAlarmId: null,
       ringAlarm: false,
       timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
@@ -135,6 +134,8 @@ class AlarmContainer2 extends React.Component {
     alarm.enabled = true;
 
     this.setState({
+      addingAlarm:false,
+      addingArrivalTime: true,
       alarm1: t,
       alarm: alarm
     });
@@ -244,6 +245,7 @@ class AlarmContainer2 extends React.Component {
 
   finishJourneySetUp(){
     this.calculateJourneyTime();
+    this.setState({showSummary: true})
     this.props.navigator.pop();
   }
 
@@ -253,12 +255,11 @@ class AlarmContainer2 extends React.Component {
   }
 
   calculateJourneyTime(){
-    let alarm = this.props.state[this.state.currentAlarmId];
-    let arrTime = alarm.journey.journeyTime instanceof Date && alarm.journey.journeyTime;
+    let arrTime = this.state.arrivalTime instanceof Date && this.state.arrivalTime;
     let time = arrTime || new Date();
     if(this.state.start && this.state.end)
     {
-      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${alarm.journey.journeyStart.coordinate.latitude},${alarm.journey.journeyStart.coordinate.longitude}&endcoord=${alarm.journey.destination.coordinate.latitude},${alarm.journey.destination.coordinate.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
+      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
       this.setState({showProgress: true});
 
       fetch(request)
@@ -277,7 +278,7 @@ class AlarmContainer2 extends React.Component {
         })
         .then((results)=> {
             this.setState({journeyTime: results["travel_time_minutes"],showProgress:false});
-            // let alarm =  this.state.alarm;
+            let alarm =  this.state.alarm;
             alarm.journey.expectedJourneyLength = results["travel_time_minutes"];
             this.props.actions.editAlarm(alarm);
         })
@@ -312,31 +313,10 @@ class AlarmContainer2 extends React.Component {
   //make calc journey button readonly unless jounery params are set.
   render(){
     const alarm = this.props.state[this.state.currentAlarmId];
-
       return (
         <View
           style={styles.container}
         >
-        {!this.state.addingArrivalTime && <TouchableHighlight
-            onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
-            style={styles.button}>
-            <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
-        </TouchableHighlight>}
-        {!this.state.addingAlarm && <TouchableHighlight
-            onPress={this.state.addingArrivalTime?this.addArrivalTimeToJourney:this.startAddingJourneyDestTime}
-            style={styles.button}>
-            <Text style={styles.buttonText}>{this.state.addingArrivalTime?"Set Destination Time":"Add Destination Time"}</Text>
-        </TouchableHighlight>}
-        {this.state.addingAlarm && <TouchableHighlight
-            onPress={this.deleteAlarm}
-            style={styles.buttondanger}>
-            <Text style={styles.buttonText}>Delete Alarm</Text>
-        </TouchableHighlight>}
-        {this.state.addingArrivalTime && <TouchableHighlight
-            onPress={this.deleteJourneyTime}
-            style={styles.buttondanger}>
-            <Text style={styles.buttonText}>Delete Destination Time</Text>
-        </TouchableHighlight>}
           {(this.state.addingAlarm || this.state.addingArrivalTime) && (<DatePickerIOS
             date={this.state.datePickerDate}
             mode={this.state.dateMode}
@@ -344,25 +324,62 @@ class AlarmContainer2 extends React.Component {
             onDateChange={this.onDateChange}
             style={styles.datePicker}
           />)}
-          <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
-          <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
-          <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
+          {this.state.addingAlarm &&
+            <View>
+              <TouchableHighlight
+                onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+                style={styles.button}>
+                <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                  onPress={this.deleteAlarm}
+                  style={styles.buttondanger}>
+                  <Text style={styles.buttonText}>Delete Alarm</Text>
+              </TouchableHighlight>
+            </View>}
+          {this.state.addingArrivalTime &&
+            <View>
+              <TouchableHighlight
+                onPress={this.state.addingArrivalTime?this.addArrivalTimeToJourney:this.startAddingJourneyDestTime}
+                style={styles.button}>
+                <Text style={styles.buttonText}>{this.state.addingArrivalTime?"Set Destination Time":"Add Destination Time"}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                  onPress={this.deleteJourneyTime}
+                  style={styles.buttondanger}>
+                  <Text style={styles.buttonText}>Delete Destination Time</Text>
+              </TouchableHighlight>
+            </View>
+          }
 
-          <TouchableHighlight
-              onPress={this.addJourney}
-              style={styles.button}>
-              <Text style={styles.buttonText}>Select Journey</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-              onPress={this.calculateJourneyTime}
-              style={styles.button}>
-              <Text style={styles.buttonText}>Recalculate Journey</Text>
-          </TouchableHighlight>
-          {this.state.alarm.time && <TouchableHighlight
-              onPress={() => this.props.navigator.pop()}
-              style={styles.buttonSuccess}>
-              <Text style={styles.buttonText}>Done</Text>
-          </TouchableHighlight>}
+          {!this.state.addingAlarm && !this.state.addingArrivalTime && !this.state.showSummary && (
+            <View>
+              <TouchableHighlight
+                  onPress={this.addJourney}
+                  style={styles.button}>
+                  <Text style={styles.buttonText}>Select Journey</Text>
+              </TouchableHighlight>
+              {/*<TouchableHighlight
+                  onPress={this.calculateJourneyTime}
+                  style={styles.button}>
+                  <Text style={styles.buttonText}>Recalculate Journey</Text>
+              </TouchableHighlight>*/}
+            </View>)
+          }
+          {
+            this.state.showSummary && (
+              <View>
+              <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
+              <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
+              <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
+                {this.state.alarm.time && <TouchableHighlight
+                    onPress={() => this.props.navigator.pop()}
+                    style={styles.buttonSuccess}>
+                    <Text style={styles.buttonText}>Done</Text>
+                </TouchableHighlight>}
+              </View>
+            )
+          }
           {this.state.showProgress && <ActivityIndicator
               animating={this.state.showProgress}
               size="large"

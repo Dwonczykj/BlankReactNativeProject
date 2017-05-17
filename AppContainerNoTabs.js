@@ -35,7 +35,7 @@ const store = configureStore(InitialState);
 // import Clock from './ClockContainer';
 // import JourneyTimerContainer from './JourneyTimerContainer';
 // import MapContainer from './mapContainer';
-import Alarm from './AlarmContainer2';
+import Alarm from './AlarmContainerProgression';
 import AlarmList from './AlarmList';
 
 class AppContainer extends Component {

@@ -67,10 +67,10 @@ class AlarmList extends React.Component {
 
     pressRow(rowData){
         this.props.navigator.push({
-            title: `${rowData.Alarm} Alarm Detail`,
+            title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
             component: AlarmContainer,
             passProps: {
-                pushEvent: rowData
+                alarm: rowData
             }
         });
     }

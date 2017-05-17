@@ -38,24 +38,33 @@ let defaults = {
   longitudeDelta: 0.0421
 }
 
+const timeout = 4000;
+let animationTimeout;
+
 export default class MapContainer extends React.Component {
   constructor(props){
     super(props);
 
-    let journeyMarkerStart = this.props.start?{
+    let markers = [];
+
+    markers = this.props.start ? markers.concat({
       key: id++,
       location: this.props.start,
       start: true,
       title: "Beginning",
       description: "hey there"
-    }:null;
-    let journeyMarkerEnd = this.props.end?{
+    })
+    :
+    markers;
+    markers = this.props.end ? markers.concat({
       key: id++,
       location: this.props.end,
       start: false,
       title: "End",
       description: "hey there"
-    }:null;
+    })
+    :
+    markers;
 
     this.state = {
       region: {
@@ -66,7 +75,7 @@ export default class MapContainer extends React.Component {
       },
       events: [],
       markers: [],
-      journeyMarkers: [],
+      journeyMarkers: markers,
       selectingStartLocation: true
     };
 
@@ -135,7 +144,19 @@ export default class MapContainer extends React.Component {
     } else {
       journeyMarkers = [ ...journeyMarkers, newMarker];
     }
-    this.setState({journeyMarkers: journeyMarkers, region: initialRegion},console.log(this.state.journeyMarkers));
+
+
+    this.setState({journeyMarkers: journeyMarkers/*, region: initialRegion*/},
+      () =>  {
+        if(journeyMarkers.length == 2)
+        {
+          this.focusMap([
+            journeyMarkers[1],
+            journeyMarkers[0],
+          ], true);
+        }
+      }
+    );
   }
 
   onPress(event){
@@ -246,6 +267,11 @@ export default class MapContainer extends React.Component {
     });
   }
 
+  focusMap(markers, animated) {
+    console.log(`Markers received to populate map: ${markers}`);
+    this.map.fitToSuppliedMarkers(markers, animated);
+  }
+
   // provider={MapView.PROVIDER_GOOGLE}
 
   //render a search Bar
@@ -259,6 +285,7 @@ export default class MapContainer extends React.Component {
       <View style={styles.container}>
         <MapView
           region={this.state.region}
+          ref={ref => { this.map = ref; }}
           onRegionChangeComplete={this.onRegionChange}
           style={StyleSheet.absoluteFill}
           onPress={this.onPress}
