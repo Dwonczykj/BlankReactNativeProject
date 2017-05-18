@@ -87,6 +87,8 @@ export default class MapContainer extends React.Component {
     this.switchToEndChooser =this.switchToEndChooser.bind(this);
     this.moveToAndAddMarkerAt = this.moveToAndAddMarkerAt.bind(this);
     this.makeMarkerAJourneyMarker = this.makeMarkerAJourneyMarker.bind(this);
+    this.dragMarker = this.dragMarker.bind(this);
+
   }
 
   componentDidMount(){
@@ -272,6 +274,15 @@ export default class MapContainer extends React.Component {
     this.map.fitToSuppliedMarkers(markers, animated);
   }
 
+  dragMarker(markerKey,coordinate,journeyMarker=true){
+    const markers = journeyMarker?this.state.journeyMarkers:this.state.markers;
+    let marker = markers.find(marker => marker.key === markerKey);
+    marker.coordinate = coordinate;
+    let otherMarkers = markers.filter(marker => marker.key !== markerKey);
+    if(journeyMarker) this.setState({journeyMarkers: [...otherMarkers,marker]});
+    else this.setState({markers: [...otherMarkers,marker]});
+  }
+
   // provider={MapView.PROVIDER_GOOGLE}
 
   //render a search Bar
@@ -297,7 +308,7 @@ export default class MapContainer extends React.Component {
           loadingIndicatorColor="#3bc91e"
         >
           {this.state.journeyMarkers.map(marker => {
-            return marker.start != null? (
+            return marker.start != null && (
               <MapView.Marker
                 key={marker.key}
                 coordinate={marker.location.coordinate}
@@ -307,36 +318,23 @@ export default class MapContainer extends React.Component {
                 style={styles.marker}
               />
             )
-            :
-            (
-              <MapView.Marker
-                key={marker.key}
-                coordinate={marker.location.coordinate}
-                title={marker.title}
-                style={styles.marker}
-              />
-            )
           })}
           {this.state.markers.map(marker => {
             return (
-              // <MapView.Marker
-              //   key={marker.key}
-              //   coordinate={marker.location}
-              //   title={marker.title}
-              //   style={styles.marker}
-              // />
               <MapView.Marker
+                  draggable
                   key={marker.key}
                   title={marker.title}
                   style={styles.marker}
+                  image={require('./img/business.png')}
                   coordinate={marker.location.coordinate}
+                  onDragEnd={(e) => this.dragMarker(marker.key,e.nativeEvent.coordinate,false)}
                   onSelect={() => console.log("marker selected")}
                   onDeselect={() => console.log("marker deselected")}
               >
-                  <PriceMarker amount={99} />
+                  {/* <PriceMarker amount={99} /> */}
                   <MapView.Callout
                     style={styles.callout}
-
                     onPress={() => this.makeMarkerAJourneyMarker(marker.key,marker.location)}
                   >
                     <View style={styles.callout} >
