@@ -15,4 +15,10 @@ To Get Started:
 * open the android studio terminal at the root and run react-native start.
 * then run: react-native run-android from the project root or press play in Android studio.
 
+
+----------------
+# Setup:
+* For location services: https://facebook.github.io/react-native/docs/geolocation.html
+* Review the npm packages that are dependant and review the pages for android manifest alterations.
+
 Thanks and enjoy!
