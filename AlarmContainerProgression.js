@@ -13,7 +13,7 @@ import Heading from './Common/Header';
 import MapContainer from './mapContainer';
 import newGuid from './Common/Guid';
 
-class AlarmContainer2 extends React.Component {
+class AlarmContainerWizard extends React.Component {
   constructor(props){
     super(props);
 
@@ -135,7 +135,7 @@ class AlarmContainer2 extends React.Component {
 
     this.setState({
       addingAlarm:false,
-      addingArrivalTime: true,
+      addingArrivalTime: false,
       alarm1: t,
       alarm: alarm
     });
@@ -227,6 +227,7 @@ class AlarmContainer2 extends React.Component {
     this.setState({
       arrivalTime: this.state.datePickerDate,
       addingArrivalTime: false,
+      showSummary: true,
       alarm: alarm
      });
     this.props.actions.editAlarm(alarm);
@@ -245,7 +246,8 @@ class AlarmContainer2 extends React.Component {
 
   finishJourneySetUp(){
     this.calculateJourneyTime();
-    this.setState({showSummary: true})
+    // this.setState({showSummary: true});
+    this.setState({addingArrivalTime: true});
     this.props.navigator.pop();
   }
 
@@ -371,7 +373,7 @@ class AlarmContainer2 extends React.Component {
               <View>
               <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
               <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
-              <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
+              <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey && alarm.journey.expectedJourneyLength? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
                 {this.state.alarm.time && <TouchableHighlight
                     onPress={() => this.props.navigator.pop()}
                     style={styles.buttonSuccess}>
@@ -406,7 +408,7 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AlarmContainer2);
+)(AlarmContainerWizard);
 
 let styles = StyleSheet.create({
     container: {

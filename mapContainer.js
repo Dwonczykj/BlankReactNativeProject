@@ -116,7 +116,7 @@ export default class MapContainer extends React.Component {
     }
     Geocoder.geocodePosition(convertEventCoordinateToGeocodeCoord(event.nativeEvent.coordinate))
       .then(res => {
-        newMarker.location = res;
+        newMarker.location = res[0];
         markers = [...markers,newMarker];
         this.setState({ markers: markers });
         return markers;
@@ -243,13 +243,21 @@ export default class MapContainer extends React.Component {
     };
     const newMarker = {
       key: id++,
-      location: null,
+      location: {
+        info: null,
+        coordinate: null
+      },
       title: apiResponse.formatted_address
     };
-    let markers = this.state.markers;
-    Geocoder.geocodePosition(convertEventCoordinateToGeocodeCoord(coordinate))
+    let markers = this.state.markers
+
+    Geocoder.geocodePosition(coordinate)
       .then(res => {
-        newMarker.location = res;
+        newMarker.location.info = res[0];
+        newMarker.location.coordinate = {
+          latitude: coordinate.lat,
+          longitude: coordinate.lng
+        }
         markers = [
           ...markers,
           newMarker
@@ -326,7 +334,7 @@ export default class MapContainer extends React.Component {
                   key={marker.key}
                   title={marker.title}
                   style={styles.marker}
-                  image={require('./img/business.png')}
+                  image={require("./img/markers/business.png")}
                   coordinate={marker.location.coordinate}
                   onDragEnd={(e) => this.dragMarker(marker.key,e.nativeEvent.coordinate,false)}
                   onSelect={() => console.log("marker selected")}
@@ -493,8 +501,8 @@ var styles = StyleSheet.create({
     },
     searchBoxContainer: {
       flex: 1,
-      marginTop: 60,
-      marginBottom: 500,
+      marginTop: 65,
+      marginBottom: 400,
       height: 90,
       alignSelf: "stretch"
     },
