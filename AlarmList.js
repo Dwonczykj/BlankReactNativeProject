@@ -29,12 +29,17 @@ class AlarmList extends React.Component {
         this.state = {
             dataSource: ds,
             alarms: {},
+            ringingArray: [],
             showProgress: true
         };
     }
 
     componentDidMount(){
         this.fetchAlarmsFromStore();
+        this.timerID = setInterval(
+          () => this.checkAlarms(),
+          1000
+        );
     }
 
     // shouldComponentUpdate(nextProps){
@@ -47,6 +52,42 @@ class AlarmList extends React.Component {
         this.fetchAlarmsFromStore(nextProps);
       }
 
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.timerID);
+    }
+
+    checkAlarms(){
+      let identifiedAlarmTimesArray = Object.keys(this.props.alarms)
+        .map(alarmKey => {
+          return {
+            time: this.props.alarms[alarmKey].time,
+            id: alarmKey
+          };
+        });
+
+      let currentDateTime = new Date();
+      let ringingArray = this.state.ringingArray;
+      let itemsToAdd = [];
+
+      for (let index = 0; index < identifiedAlarmTimesArray.length; index++) {
+        if(Math.abs(identifiedAlarmTimesArray[index].time - currentDateTime) < 1000)
+        {
+          let newItem = identifiedAlarmTimesArray[index].id;
+          ringingArray = [
+            ...ringingArray,
+            newItem
+          ];
+        }
+      }
+      this.setState({ringingArray: ringingArray});
+    }
+
+    turnOffAlarm(removeId){
+      let ringingArray = this.state.ringingArray
+        .filter(id => id !== removeId);
+      this.setState({ringingArray: ringingArray});
     }
 
     fetchAlarmsFromStore(nextProps){
@@ -66,13 +107,40 @@ class AlarmList extends React.Component {
     }
 
     pressRow(rowData){
-        this.props.navigator.push({
-            title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
-            component: AlarmContainer,
-            passProps: {
-                alarm: rowData
-            }
-        });
+      // navigator.geolocation.getCurrentPosition(
+      //   (res) => {
+      //     let coordinate = {
+      //       latitude = res.coords.latitude,
+      //       longitude = res.coords.longitude
+      //     };
+      //
+      //     this.props.navigator.push({
+      //         title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
+      //         component: AlarmContainer,
+      //         passProps: {
+      //             alarm: rowData,
+      //             currentLocation: coordinate
+      //         }
+      //     });
+      //   }
+      //   ,(er) => {
+      //     console.log(er);
+      //     this.props.navigator.push({
+      //         title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
+      //         component: AlarmContainer,
+      //         passProps: {
+      //             alarm: rowData
+      //         }
+      //     });
+      //   }
+      // );
+      this.props.navigator.push({
+          title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
+          component: AlarmContainer,
+          passProps: {
+              alarm: rowData
+          }
+      });
     }
 
     toggleChange(rowData,newValue){
@@ -196,6 +264,7 @@ class AlarmList extends React.Component {
     }
 
     render(){
+      //TODO If ringingArray.count > 0 then UN.
       if(this.state.showProgress){
         return (
             <View style={{
@@ -205,6 +274,25 @@ class AlarmList extends React.Component {
                 <ActivityIndicator
                     size="large"
                     animating={true} />
+            </View>
+        );
+      }
+
+      if(this.state.ringingArray && this.state.ringingArray.length > 0)
+      {
+        return (
+            <View style={{
+                flex: 1,
+                justifyContent: 'center'
+            }}>
+                <Text
+                    style={{
+                      color: 'red',
+                      paddingTop: 10
+                  }}
+                >
+                  Alarm Ringing
+                </Text>
             </View>
         );
       }

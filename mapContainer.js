@@ -26,13 +26,6 @@ const LATITUDE_DELTA = 0.0922;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 let id = 0;
 
-let initialRegion = {
-  latitude: 51.444075,
-  longitude: -0.160629,
-  latitudeDelta: 0.0922,
-  longitudeDelta: 0.0421,
-};
-
 let defaults = {
   latitudeDelta: 0.0922,
   longitudeDelta: 0.0421
@@ -66,10 +59,13 @@ export default class MapContainer extends React.Component {
     :
     markers;
 
+
+
+
     this.state = {
       region: {
-        latitude: 51.444075,
-        longitude: -0.160629,
+        latitude: this.props.coordinate?this.props.currentLocation.latitude:51.444075,
+        longitude: this.props.coordinate?this.props.currentLocation.longitude:-0.160629,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       },
@@ -91,8 +87,9 @@ export default class MapContainer extends React.Component {
 
   }
 
-  componentDidMount(){
-  }
+  // componentDidMount(){
+  //   //
+  // }
 
   onRegionChange(region) {
     this.setState({ region });
@@ -148,7 +145,7 @@ export default class MapContainer extends React.Component {
     }
 
 
-    this.setState({journeyMarkers: journeyMarkers/*, region: initialRegion*/},
+    this.setState({journeyMarkers: journeyMarkers},
       () =>  {
         if(journeyMarkers.length == 2)
         {
@@ -377,12 +374,12 @@ export default class MapContainer extends React.Component {
           >
             <Text>End</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/*<TouchableOpacity
             onPress={() => this.props.complete()}
             style={styles.primaryButton}
           >
             <Text>Done</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
         </View>
       </View>
     );

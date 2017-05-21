@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   DatePickerIOS,
   StyleSheet,
+  Switch,
   Text,
   TouchableHighlight,
   View
@@ -35,6 +36,7 @@ class AlarmContainerWizard extends React.Component {
       end: null,
       journeyTime: "()"
     }
+
     //TODO: create a binder function which takes an array of functions as the parameter.
     this.addAlarm = this.addAlarm.bind(this);
     this.editAlarm = this.editAlarm.bind(this);
@@ -51,6 +53,7 @@ class AlarmContainerWizard extends React.Component {
     this.startAddingJourneyDestTime = this.startAddingJourneyDestTime.bind(this);
     this.deleteAlarm = this.deleteAlarm.bind(this);
     this.deleteJourneyTime = this.deleteJourneyTime.bind(this);
+    this.toggleChange = this.toggleChange.bind(this);
   }
 
   getInitialAlarm(){
@@ -299,17 +302,66 @@ class AlarmContainerWizard extends React.Component {
   addJourney(){
     let journeyKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
     let journey = journeyKey && this.props.state[journeyKey].journey;
-    this.props.navigator.push({
-        title: 'Journey Planner',
-        component: MapContainer,
-        passProps: {
-          onStart: this.addStartToJourney, //use the mapView on Select method.
-          onEnd: this.addEndToJourney,
-          complete: this.finishJourneySetUp,
-          start: journey && journey.journeyStart,
-          end: journey && journey.destination
-        }
-    });
+    // this.props.navigator.push({
+    //     title: 'Journey Planner',
+    //     component: MapContainer,
+    //     rightButtonTitle: 'Done',
+    //     onRightButtonPress: () => this.finishJourneySetUp(),
+    //     passProps: {
+    //       onStart: this.addStartToJourney, //use the mapView on Select method.
+    //       onEnd: this.addEndToJourney,
+    //       complete: this.finishJourneySetUp,
+    //       start: journey && journey.journeyStart,
+    //       end: journey && journey.destination
+    //     }
+    // });
+
+    navigator.geolocation.getCurrentPosition(
+      (res) => {
+        let currentLocation = {
+          latitude: res.coords.latitude,
+          longitude: res.coords.longitude
+        };
+
+        this.props.navigator.push({
+            title: 'Journey Planner',
+            component: MapContainer,
+            rightButtonTitle: 'Done',
+            onRightButtonPress: () => this.finishJourneySetUp(),
+            passProps: {
+              currentLocation: currentLocation,
+              onStart: this.addStartToJourney, //use the mapView on Select method.
+              onEnd: this.addEndToJourney,
+              complete: this.finishJourneySetUp,
+              start: journey && journey.journeyStart,
+              end: journey && journey.destination
+            }
+        });
+      }
+      ,(er) => {
+        console.log(er);
+        this.props.navigator.push({
+            title: 'Journey Planner',
+            component: MapContainer,
+            rightButtonTitle: 'Done',
+            onRightButtonPress: () => this.finishJourneySetUp(),
+            passProps: {
+              onStart: this.addStartToJourney, //use the mapView on Select method.
+              onEnd: this.addEndToJourney,
+              complete: this.finishJourneySetUp,
+              start: journey && journey.journeyStart,
+              end: journey && journey.destination
+            }
+        });
+      }
+    );
+  }
+
+  toggleChange(newValue){
+    let alarm = this.state.alarm;
+    // const updatedAlarm = Object.values(alarms).find(alarm => alarm.id === rowData.id);
+    alarm.offWhenUpToggle = newValue;
+    this.props.actions.editAlarm(alarm);
   }
 
   //make calc journey button readonly unless jounery params are set.
@@ -351,6 +403,11 @@ class AlarmContainerWizard extends React.Component {
                   style={styles.buttondanger}>
                   <Text style={styles.buttonText}>Delete Destination Time</Text>
               </TouchableHighlight>
+              <Switch
+                value={this.state.alarm.offWhenUpToggle}
+                onTintColor="rgba(228, 122, 11, 0.78)"
+                onValueChange={(value) => this.toggleChange(value)}
+              />
             </View>
           }
 

@@ -44,12 +44,12 @@ class AppContainer extends Component {
     }
 
     _handleNavigationRequest() {
-    this.refs.alarmNav.push({
-      component: Alarm,
-      title: 'Add Alarm',
-      passProps: { myProp: 'genius' },
-    });
-  }
+      this.refs.alarmNav.push({
+        component: Alarm,
+        title: 'Add Alarm',
+        passProps: { myProp: 'genius' },
+      });
+    }
 
     render(){
       return (
