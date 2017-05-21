@@ -72,6 +72,7 @@ export default class MapContainer extends React.Component {
       events: [],
       markers: [],
       journeyMarkers: markers,
+      lunchMarkers: this.props.lunchMarkers?this.props.lunchMarkers:[],
       selectingStartLocation: true
     };
 
@@ -86,10 +87,6 @@ export default class MapContainer extends React.Component {
     this.dragMarker = this.dragMarker.bind(this);
 
   }
-
-  // componentDidMount(){
-  //   //
-  // }
 
   onRegionChange(region) {
     this.setState({ region });
@@ -143,7 +140,10 @@ export default class MapContainer extends React.Component {
     } else {
       journeyMarkers = [ ...journeyMarkers, newMarker];
     }
-
+    if(newMarker.start == false)
+    {
+      this.addLunchPlacesToMapAround(newMarker.location.coordinate);
+    }
 
     this.setState({journeyMarkers: journeyMarkers},
       () =>  {
@@ -156,6 +156,49 @@ export default class MapContainer extends React.Component {
         }
       }
     );
+  }
+
+  addLunchPlacesToMapAround(coordinate){
+    let request = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinate.latitude},${coordinate.longitude}&radius=500&type=restaurant&key=AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c`;
+
+    fetch(request)
+      .then((response)=> {
+          if(response.status >= 200 && response.status < 300){
+              return response;
+          }
+
+          throw {
+              badCredentials: response.status == 401,
+              unknownError: response.status != 401
+          }
+      })
+      .then((response)=> {
+          return response.json();
+      })
+      .then((results)=> {
+
+          let lunchMarkersArray = results.results.map(result => {
+            return {
+              key: id++,
+              location: {
+                coordinate: {
+                  latitude: result.geometry.location.lat,
+                  longitude: result.geometry.location.lng
+                }
+              },
+              icon: result.icon,
+              title: result.name
+
+            }
+          });
+          this.props.addLunchMarkers(lunchMarkersArray);
+          this.setState({lunchMarkers: lunchMarkersArray});
+      })
+      .catch((err)=> {
+        debugger;
+          this.setState({error: err});
+          return console.log(err);
+      });
   }
 
   onPress(event){
@@ -296,6 +339,9 @@ export default class MapContainer extends React.Component {
   //button to say complete  which woudl call this.props.complete and maybe do navigation?
 
   //add a callout after searchinng which says Start Here and is a button. Or End here.
+  // pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
+  //TODO: Styling for markers wont work as need to change the size of the png through scaling or somehting
+  
   render() {
     return (
       <View style={styles.container}>
@@ -319,7 +365,8 @@ export default class MapContainer extends React.Component {
                 coordinate={marker.location.coordinate}
                 title={marker.title}
                 description={marker.description}
-                pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
+                image={marker.start?require("./img/markers/real-estate.png"):require("./img/markers/business.png")}
+
                 style={styles.marker}
               />
             )
@@ -344,6 +391,30 @@ export default class MapContainer extends React.Component {
                   >
                     <View style={styles.callout} >
                       <Text style={styles.calloutText}>{this.state.selectingStartLocation?'Start':'End'} Here?</Text>
+                    </View>
+                  </MapView.Callout>
+              </MapView.Marker>
+            );
+          })}
+          {this.state.lunchMarkers.map(marker => {
+            return (
+              <MapView.Marker
+                  key={marker.key}
+                  title={marker.title}
+                  style={styles.lunchMarker}
+                  image={{uri: marker.icon}}
+                  coordinate={marker.location.coordinate}
+
+                  onSelect={() => console.log("marker selected")}
+                  onDeselect={() => console.log("marker deselected")}
+              >
+                  {/* <PriceMarker amount={99} /> */}
+                  <MapView.Callout
+                    style={styles.callout}
+                    onPress={() => console.log(marker.key)}
+                  >
+                    <View style={styles.callout} >
+                      <Text style={styles.calloutText}>Lunch here?</Text>
                     </View>
                   </MapView.Callout>
               </MapView.Marker>
@@ -506,6 +577,14 @@ var styles = StyleSheet.create({
     marker: {
       width: 25,
       height: 25,
+    },
+    journeyMarker: {
+      width: 35,
+      height: 35
+    },
+    lunchMarker: {
+      width: 15,
+      height: 15
     },
     callout: {
       width: 200,

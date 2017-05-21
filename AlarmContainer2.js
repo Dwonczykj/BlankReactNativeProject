@@ -345,7 +345,9 @@ class AlarmContainer2 extends React.Component {
               onEnd: this.addEndToJourney,
               complete: this.finishJourneySetUp,
               start: journey && journey.journeyStart,
-              end: journey && journey.destination
+              end: journey && journey.destination,
+              addLunchMarkers: () => this.addLunchMarkers,
+              lunchMarkers: journey.lunchMarkers
             }
         });
       }
@@ -361,11 +363,23 @@ class AlarmContainer2 extends React.Component {
               onEnd: this.addEndToJourney,
               complete: this.finishJourneySetUp,
               start: journey && journey.journeyStart,
-              end: journey && journey.destination
+              end: journey && journey.destination,
+              addLunchMarkers: () => this.addLunchMarkers,
+              lunchMarkers: journey.lunchMarkers
             }
         });
       }
     );
+  }
+
+  addLunchMarkers(lunchMarkersArray){
+    let alarmKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
+    let alarm = alarmKey && this.props.state[alarmKey];
+    alarm.journey.lunchMarkers = lunchMarkersArray;
+    this.setState({
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
   }
 
   toggleChange(newValue){

@@ -64,6 +64,7 @@ class AlarmContainerWizard extends React.Component {
         destination: null,
         expectedJourneyLength: null,
         journeyStart: null,
+        lunchMarkers: null
       },
       offWhenUpToggle: false,
       enabled: false
@@ -289,8 +290,9 @@ class AlarmContainerWizard extends React.Component {
         })
         .catch((err)=> {
           debugger;
+          //TODO: show user that we couldnt calculate the journey time.
             this.setState({showProgress: false, error: err});
-            return cb(err);
+            return console.log(err);
         });
     }else
     {
@@ -300,8 +302,8 @@ class AlarmContainerWizard extends React.Component {
   }
 
   addJourney(){
-    let journeyKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
-    let journey = journeyKey && this.props.state[journeyKey].journey;
+    let alarmKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
+    let journey = alarmKey && this.props.state[alarmKey].journey;
     // this.props.navigator.push({
     //     title: 'Journey Planner',
     //     component: MapContainer,
@@ -334,7 +336,9 @@ class AlarmContainerWizard extends React.Component {
               onEnd: this.addEndToJourney,
               complete: this.finishJourneySetUp,
               start: journey && journey.journeyStart,
-              end: journey && journey.destination
+              end: journey && journey.destination,
+              addLunchMarkers: () => this.addLunchMarkers,
+              lunchMarkers: journey.lunchMarkers
             }
         });
       }
@@ -350,11 +354,23 @@ class AlarmContainerWizard extends React.Component {
               onEnd: this.addEndToJourney,
               complete: this.finishJourneySetUp,
               start: journey && journey.journeyStart,
-              end: journey && journey.destination
+              end: journey && journey.destination,
+              addLunchMarkers: () => this.addLunchMarkers,
+              lunchMarkers: journey.lunchMarkers
             }
         });
       }
     );
+  }
+
+  addLunchMarkers(lunchMarkersArray){
+    let alarmKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
+    let alarm = alarmKey && this.props.state[alarmKey];
+    alarm.journey.lunchMarkers = lunchMarkersArray;
+    this.setState({
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
   }
 
   toggleChange(newValue){
