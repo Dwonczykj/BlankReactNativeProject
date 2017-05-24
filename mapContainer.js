@@ -176,7 +176,6 @@ export default class MapContainer extends React.Component {
           return response.json();
       })
       .then((results)=> {
-
           let lunchMarkersArray = results.results.map(result => {
             return {
               key: id++,
@@ -186,6 +185,7 @@ export default class MapContainer extends React.Component {
                   longitude: result.geometry.location.lng
                 }
               },
+              rating: result.rating,
               icon: result.icon,
               title: result.name
 
@@ -331,6 +331,14 @@ export default class MapContainer extends React.Component {
     else this.setState({markers: [...otherMarkers,marker]});
   }
 
+  getPercentageLength(length,percentage){
+    if(!(typeof(percentage) === "number") || !(typeof(length) === "number"))
+    {
+      throw new Exception();
+    }
+    return Math.round(length * percentage);
+  }
+
   // provider={MapView.PROVIDER_GOOGLE}
 
   //render a search Bar
@@ -341,7 +349,7 @@ export default class MapContainer extends React.Component {
   //add a callout after searchinng which says Start Here and is a button. Or End here.
   // pinColor={marker.start? "rgb(163, 45, 236)":"rgb(77, 236, 45)"}
   //TODO: Styling for markers wont work as need to change the size of the png through scaling or somehting
-  
+
   render() {
     return (
       <View style={styles.container}>
@@ -366,6 +374,7 @@ export default class MapContainer extends React.Component {
                 title={marker.title}
                 description={marker.description}
                 image={marker.start?require("./img/markers/real-estate.png"):require("./img/markers/business.png")}
+                centerOffset={{x:0,y:-11}}
 
                 style={styles.marker}
               />
@@ -378,7 +387,6 @@ export default class MapContainer extends React.Component {
                   key={marker.key}
                   title={marker.title}
                   style={styles.marker}
-                  image={require("./img/markers/business.png")}
                   coordinate={marker.location.coordinate}
                   onDragEnd={(e) => this.dragMarker(marker.key,e.nativeEvent.coordinate,false)}
                   onSelect={() => console.log("marker selected")}
@@ -396,7 +404,7 @@ export default class MapContainer extends React.Component {
               </MapView.Marker>
             );
           })}
-          {this.state.lunchMarkers.map(marker => {
+          {(this.state.region.latitudeDelta < 0.005 && this.state.region.longitudeDelta < 0.005) && this.state.lunchMarkers.map(marker => {
             return (
               <MapView.Marker
                   key={marker.key}
@@ -417,6 +425,24 @@ export default class MapContainer extends React.Component {
                       <Text style={styles.calloutText}>Lunch here?</Text>
                     </View>
                   </MapView.Callout>
+              </MapView.Marker>
+            );
+          })}
+          {(this.state.region.latitudeDelta >= 0.005 && this.state.region.longitudeDelta >= 0.005) && this.state.lunchMarkers
+            .sort((a,b) => b.rating - a.rating)
+            .slice(0,this.getPercentageLength(this.state.lunchMarkers.length,0.2))
+            .map(marker => {
+            return (
+              <MapView.Marker
+                  key={marker.key}
+                  title={marker.title}
+                  style={styles.lunchMarker}
+                  image={{uri: marker.icon}}
+                  coordinate={marker.location.coordinate}
+
+                  onSelect={() => console.log("marker selected")}
+                  onDeselect={() => console.log("marker deselected")}
+              >
               </MapView.Marker>
             );
           })}
@@ -579,12 +605,14 @@ var styles = StyleSheet.create({
       height: 25,
     },
     journeyMarker: {
-      width: 35,
-      height: 35
+      width: 80,
+      height: 80,
+      resizeMode: "contain"
     },
     lunchMarker: {
-      width: 15,
-      height: 15
+      width: 5,
+      height: 5,
+      resizeMode: "contain"
     },
     callout: {
       width: 200,
