@@ -126,7 +126,11 @@ class AlarmContainer2 extends React.Component {
   }
 
   startAddingJourneyDestTime(){
-    this.setState({addingArrivalTime: true});
+    const currentAlarmDate = this.state.alarm.time;
+    const journeyTime = this.state.alarm.journey.expectedJourneyLength || 15;
+    const noOfMinsToAdd = 30 + journeyTime;
+    const newDateObj = new Date(currentAlarmDate.getTime() + noOfMinsToAdd*60000);
+    this.setState({addingArrivalTime: true, date: newDateObj});
   }
 
   addAlarm(){

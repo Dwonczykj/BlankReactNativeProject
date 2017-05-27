@@ -56,8 +56,11 @@ class AlarmList extends React.Component {
             alarms: {},
             alarmSound: whoosh,
             ringingArray: [],
+            alreadyRinging: false,
             showProgress: true
         };
+
+        this.soundTheAlarm = this.soundTheAlarm.bind(this);
     }
 
     // get alarmSound() {
@@ -117,18 +120,41 @@ class AlarmList extends React.Component {
     }
 
     soundTheAlarm(){
+      this.setState({alreadyRinging: true})
+      Alert.alert(
+        'GeoAlarm',
+        "Custom User Text To Be Set By User",
+        [
+          {text: 'Stop', onPress: () => this.stopAlarms()}
+        ],
+        {cancelable: false}
+      )
       // Play the sound with an onEnd callback
+      debugger;
       this.state.alarmSound.play((success) => {
         if (success) {
           console.log('successfully finished playing');
+          debugger;
         } else {
           console.log('playback failed due to audio decoding errors');
         }
       });
     }
 
+    displayClockSectionAs12HourTime(section){
+      if(section<10){
+        return `0${section.toString()}`;
+      } else{
+        return section.toString();
+      }
+    }
+
+    displayClockAs24HourTime(){
+
+    }
+
     stopAlarms(){
-      this.setState({ringingArray:[]});
+      this.setState({ringingArray:[], alreadyRinging: false});
     }
 
     turnOffAlarm(removeId){
@@ -235,7 +261,7 @@ class AlarmList extends React.Component {
                             fontSize: 32,
                             color: "rgba(228, 122, 11, 0.78)"
                         }}>
-                            {rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`}
+                            {rowData.time && `${this.displayClockSectionAs12HourTime(rowData.time.getHours())}:${this.displayClockSectionAs12HourTime(rowData.time.getMinutes())}`}
                         </Text>
                         <View>
                           <Text style={{
@@ -325,51 +351,42 @@ class AlarmList extends React.Component {
         );
       }
 
-      if(this.state.ringingArray && this.state.ringingArray.length > 0)
-      {
-        return (
-            <View style={{
-                flex: 1,
-                justifyContent: 'center'
-            }}>
-                <Text
-                    style={{
-                      color: 'red',
-                      paddingTop: 10
-                  }}
-                >
-                  Alarm Ringing
-                </Text>
-                {() => {
-                  Alert.alert(
-                    'GeoAlarm',
-                    "Custom User Text To Be Set By User",
-                    [
-                      {text: 'Stop', onPress: () => this.stopAlarms()},
-                      {text: 'OK', onPress: () => console.log('OK Pressed!')},
-                    ],
-                    {cancelable: false}
-                  );
-                  this.soundTheAlarm();
-                }}
-                <TouchableHighlight style={styles.wrapper}
-                  onPress={() => Alert.alert(
-                    'Alert Title',
-                    "alertMessage",
-                    [
-                      {text: 'Stop', onPress: () => this.stopAlarms()},
-                      {text: 'OK', onPress: () => console.log('OK Pressed!')},
-                    ],
-                    {cancelable: false}
-                  )}>
-                  <View style={styles.button}>
-                    <Text>Alert with two buttons</Text>
-                  </View>
-                </TouchableHighlight>
-            </View>
-
-        );
-      }
+      // if(this.state.ringingArray && this.state.ringingArray.length > 0)
+      // {
+      //   return (
+      //       <View style={{
+      //           flex: 1,
+      //           justifyContent: 'center'
+      //       }}>
+      //           {() => {
+      //             Alert.alert(
+      //               'GeoAlarm',
+      //               "Custom User Text To Be Set By User",
+      //               [
+      //                 {text: 'Stop', onPress: () => this.stopAlarms()}
+      //               ],
+      //               {cancelable: false}
+      //             );
+      //             this.soundTheAlarm();
+      //           }}
+      //           <TouchableHighlight style={styles.wrapper}
+      //             onPress={() => Alert.alert(
+      //               'Alert Title',
+      //               "alertMessage",
+      //               [
+      //                 {text: 'Stop', onPress: () => this.stopAlarms()},
+      //                 {text: 'OK', onPress: () => console.log('OK Pressed!')},
+      //               ],
+      //               {cancelable: false}
+      //             )}>
+      //             <View style={styles.button}>
+      //               <Text>Alert with two buttons</Text>
+      //             </View>
+      //           </TouchableHighlight>
+      //       </View>
+      //
+      //   );
+      // }
 
       return (
         <View style={{
@@ -380,12 +397,16 @@ class AlarmList extends React.Component {
                 dataSource={this.state.dataSource}
                 enableEmptySections={true}
                 renderRow={this.renderRow.bind(this)} />
+            {this.state.ringingArray && this.state.ringingArray.length > 0 && !this.state.alreadyRinging
+              &&
+              this.soundTheAlarm()
+            }
         </View>
       );
     }
 }
 
-let styles = StyleSheet.Create({
+let styles = StyleSheet.create({
   wrapper: {
     borderRadius: 5,
     marginBottom: 5,
