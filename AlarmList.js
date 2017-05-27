@@ -3,9 +3,11 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {
+  Alert,
   Text,
   View,
   ListView,
+  StyleSheet,
   ActivityIndicator,
   Image,
   Switch,
@@ -15,24 +17,52 @@ import AlarmActions from './Actions/alarmActions';
 import AlarmContainer from './AlarmContainer2';
 import {getAuthInfo} from './AuthService';
 
-var moment = require('moment');
-var PushPayload = require('./PushPayload.js');
+let moment = require('moment');
+let PushPayload = require('./PushPayload.js');
+
+
+// Import the react-native-sound module
+var Sound = require('react-native-sound');
+
+// Enable playback in silence mode (iOS only)
+Sound.setCategory('Playback');
 
 class AlarmList extends React.Component {
     constructor(props){
         super(props);
 
-        var ds = new ListView.DataSource({
+        let ds = new ListView.DataSource({
             rowHasChanged: (r1, r2) => r1 !== r2
         });
+
+        // Load the sound file 'Alarm-clock-sound.mp3' from the app bundle
+        // See notes below about preloading sounds within initialization code below.
+        let whoosh = new Sound('Alarm-clock-sound.mp3', Sound.MAIN_BUNDLE, (error) => {
+          if (error) {
+            console.log('failed to load the sound', error);
+            return;
+          }
+          // loaded successfully
+          console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+        });
+
+        // Loop indefinitely until stop() is called
+        whoosh.setNumberOfLoops(-1);
+
+        whoosh.setVolume(1.5);
 
         this.state = {
             dataSource: ds,
             alarms: {},
+            alarmSound: whoosh,
             ringingArray: [],
             showProgress: true
         };
     }
+
+    // get alarmSound() {
+    //   return
+    // }
 
     componentDidMount(){
         this.fetchAlarmsFromStore();
@@ -56,6 +86,8 @@ class AlarmList extends React.Component {
 
     componentWillUnmount() {
       clearInterval(this.timerID);
+      let soundResource = this.state.alarmSound;
+      soundResource.release();
     }
 
     checkAlarms(){
@@ -82,6 +114,21 @@ class AlarmList extends React.Component {
         }
       }
       this.setState({ringingArray: ringingArray});
+    }
+
+    soundTheAlarm(){
+      // Play the sound with an onEnd callback
+      this.state.alarmSound.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    }
+
+    stopAlarms(){
+      this.setState({ringingArray:[]});
     }
 
     turnOffAlarm(removeId){
@@ -293,7 +340,34 @@ class AlarmList extends React.Component {
                 >
                   Alarm Ringing
                 </Text>
+                {() => {
+                  Alert.alert(
+                    'GeoAlarm',
+                    "Custom User Text To Be Set By User",
+                    [
+                      {text: 'Stop', onPress: () => this.stopAlarms()},
+                      {text: 'OK', onPress: () => console.log('OK Pressed!')},
+                    ],
+                    {cancelable: false}
+                  );
+                  this.soundTheAlarm();
+                }}
+                <TouchableHighlight style={styles.wrapper}
+                  onPress={() => Alert.alert(
+                    'Alert Title',
+                    "alertMessage",
+                    [
+                      {text: 'Stop', onPress: () => this.stopAlarms()},
+                      {text: 'OK', onPress: () => console.log('OK Pressed!')},
+                    ],
+                    {cancelable: false}
+                  )}>
+                  <View style={styles.button}>
+                    <Text>Alert with two buttons</Text>
+                  </View>
+                </TouchableHighlight>
             </View>
+
         );
       }
 
@@ -310,6 +384,17 @@ class AlarmList extends React.Component {
       );
     }
 }
+
+let styles = StyleSheet.Create({
+  wrapper: {
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  button: {
+    backgroundColor: '#eeeeee',
+    padding: 10,
+  },
+});
 
 const mapStateToProps = (store) =>
 {

@@ -38,9 +38,11 @@ const store = configureStore(InitialState);
 import Alarm from './AlarmContainerProgression';
 import AlarmList from './AlarmList';
 
+
 class AppContainer extends Component {
     constructor(props){
         super(props);
+
     }
 
     _handleNavigationRequest() {
@@ -81,7 +83,7 @@ class AppContainer extends Component {
                   barTintColor: 'rgba(19, 20, 29, 0.84)',
                   titleTextColor: "rgb(244, 161, 65)",
                   // rightButtonIcon:
-                  onRightButtonPress: () => this._handleNavigationRequest(),
+                  onRightButtonPress: () => this._handleNavigationRequest()
               }}
           />
         </Provider>

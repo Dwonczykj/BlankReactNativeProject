@@ -17,6 +17,7 @@
     "react-native-geocoder": "^0.4.8",
     "react-native-keep-awake": "^2.0.3",
     "react-native-maps": "^0.14.0",
+    "react-native-sound": "0.10.1",
     "react-native-vector-icons": "^4.1.1",
     "react-redux": "^5.0.4",
     "react-thunk": "^1.0.0",
