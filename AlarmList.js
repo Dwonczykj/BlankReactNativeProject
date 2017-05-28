@@ -27,6 +27,8 @@ var Sound = require('react-native-sound');
 // Enable playback in silence mode (iOS only)
 Sound.setCategory('Playback');
 
+let j = 0;
+
 class AlarmList extends React.Component {
     constructor(props){
         super(props);
@@ -56,7 +58,7 @@ class AlarmList extends React.Component {
             alarms: {},
             alarmSound: whoosh,
             ringingArray: [],
-            alreadyRinging: false,
+            // alreadyRinging: false,
             showProgress: true
         };
 
@@ -116,11 +118,14 @@ class AlarmList extends React.Component {
           ];
         }
       }
-      this.setState({ringingArray: ringingArray});
+      if(ringingArray.length > 0)
+      {
+        this.setState({ringingArray: ringingArray});
+      }
     }
 
     soundTheAlarm(){
-      this.setState({alreadyRinging: true})
+      j = 1;
       Alert.alert(
         'GeoAlarm',
         "Custom User Text To Be Set By User",
@@ -130,11 +135,10 @@ class AlarmList extends React.Component {
         {cancelable: false}
       )
       // Play the sound with an onEnd callback
-      debugger;
+
       this.state.alarmSound.play((success) => {
         if (success) {
           console.log('successfully finished playing');
-          debugger;
         } else {
           console.log('playback failed due to audio decoding errors');
         }
@@ -154,7 +158,10 @@ class AlarmList extends React.Component {
     }
 
     stopAlarms(){
-      this.setState({ringingArray:[], alreadyRinging: false});
+      j = 0;
+      this.state.alarmSound.stop();
+      this.setState({ringingArray:[]});
+      //TODO: All alarms that were enabled need a temporary flag to say that they have gone off for today.
     }
 
     turnOffAlarm(removeId){
@@ -337,7 +344,7 @@ class AlarmList extends React.Component {
     }
 
     render(){
-      //TODO If ringingArray.count > 0 then UN.
+
       if(this.state.showProgress){
         return (
             <View style={{
@@ -351,43 +358,6 @@ class AlarmList extends React.Component {
         );
       }
 
-      // if(this.state.ringingArray && this.state.ringingArray.length > 0)
-      // {
-      //   return (
-      //       <View style={{
-      //           flex: 1,
-      //           justifyContent: 'center'
-      //       }}>
-      //           {() => {
-      //             Alert.alert(
-      //               'GeoAlarm',
-      //               "Custom User Text To Be Set By User",
-      //               [
-      //                 {text: 'Stop', onPress: () => this.stopAlarms()}
-      //               ],
-      //               {cancelable: false}
-      //             );
-      //             this.soundTheAlarm();
-      //           }}
-      //           <TouchableHighlight style={styles.wrapper}
-      //             onPress={() => Alert.alert(
-      //               'Alert Title',
-      //               "alertMessage",
-      //               [
-      //                 {text: 'Stop', onPress: () => this.stopAlarms()},
-      //                 {text: 'OK', onPress: () => console.log('OK Pressed!')},
-      //               ],
-      //               {cancelable: false}
-      //             )}>
-      //             <View style={styles.button}>
-      //               <Text>Alert with two buttons</Text>
-      //             </View>
-      //           </TouchableHighlight>
-      //       </View>
-      //
-      //   );
-      // }
-
       return (
         <View style={{
             flex: 1,
@@ -397,7 +367,7 @@ class AlarmList extends React.Component {
                 dataSource={this.state.dataSource}
                 enableEmptySections={true}
                 renderRow={this.renderRow.bind(this)} />
-            {this.state.ringingArray && this.state.ringingArray.length > 0 && !this.state.alreadyRinging
+            {this.state.ringingArray && this.state.ringingArray.length > 0 && j == 0
               &&
               this.soundTheAlarm()
             }

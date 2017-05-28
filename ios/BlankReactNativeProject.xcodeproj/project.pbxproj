@@ -49,6 +49,7 @@
 		D2556D5E33694BE7BDBD77B6 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 760F0D2C42E14D0A8FA0EF03 /* FontAwesome.ttf */; };
 		D453636B98BE4018B69DAB72 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AD28EA5A47B4861BF7CC58D /* Ionicons.ttf */; };
 		D47D24691E99A8AA0010F76E /* Encoding.m in Sources */ = {isa = PBXBuildFile; fileRef = D47D24681E99A8AA0010F76E /* Encoding.m */; };
+		D4C1C3171EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D4C1C3161EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 */; };
 		D91798F1A3764B3D856A87D5 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F035C1D130B14F3CA4F8E3B4 /* Zocial.ttf */; };
 		E0A363E08271445BAE2E27E8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A631C6093D5E419FABCA74D6 /* MaterialCommunityIcons.ttf */; };
 		E20EE8F8944B4D349482A2CE /* libRNGeocoder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87558254CD7E4CB2A0685823 /* libRNGeocoder.a */; };
@@ -326,6 +327,7 @@
 		C957EE7E488A439A901B6123 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		D47D24671E99A8AA0010F76E /* Encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encoding.h; path = BlankReactNativeProject/Encoding.h; sourceTree = "<group>"; };
 		D47D24681E99A8AA0010F76E /* Encoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Encoding.m; path = BlankReactNativeProject/Encoding.m; sourceTree = "<group>"; };
+		D4C1C3161EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Alarm-clock-sound.mp3"; path = "../sounds_NOT_COMMERCIAL/Alarm-clock-sound.mp3"; sourceTree = "<group>"; };
 		E69650623035469481EAFF17 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		F035C1D130B14F3CA4F8E3B4 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -565,6 +567,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				D4C1C3161EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 */,
 				13B07FAE1A68108700A75B9A /* BlankReactNativeProject */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* BlankReactNativeProjectTests */,
@@ -1052,6 +1055,7 @@
 				70ADD74631124C09BAE6ADA8 /* Foundation.ttf in Resources */,
 				D453636B98BE4018B69DAB72 /* Ionicons.ttf in Resources */,
 				E0A363E08271445BAE2E27E8 /* MaterialCommunityIcons.ttf in Resources */,
+				D4C1C3171EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 in Resources */,
 				592437C09C194F1E922DBC42 /* MaterialIcons.ttf in Resources */,
 				01C45492E35E4E2D9E53D231 /* Octicons.ttf in Resources */,
 				007467B9AC384FF7A7441688 /* SimpleLineIcons.ttf in Resources */,
