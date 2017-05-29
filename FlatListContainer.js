@@ -55,7 +55,7 @@ class FlatAlarmList extends React.Component {
             alarmSound: whoosh,
             ringingArray: [],
             // alreadyRinging: false,
-            showProgress: true
+            showProgress: false
         };
 
         this.soundTheAlarm = this.soundTheAlarm.bind(this);
@@ -68,7 +68,7 @@ class FlatAlarmList extends React.Component {
     // }
 
     componentDidMount(){
-        this.fetchAlarmsFromStore();
+        // this.fetchAlarmsFromStore();
         this.timerID = setInterval(
           () => this.checkAlarms(),
           1000
@@ -80,10 +80,10 @@ class FlatAlarmList extends React.Component {
     // }
 
     componentWillReceiveProps(nextProps){
-      if(nextProps.alarms && Object.keys(nextProps.alarms).length > 0)
-      {
-        this.fetchAlarmsFromStore(nextProps);
-      }
+      // if(nextProps.alarms && Object.keys(nextProps.alarms).length > 0)
+      // {
+      //   this.fetchAlarmsFromStore(nextProps);
+      // }
 
     }
 
@@ -159,7 +159,7 @@ class FlatAlarmList extends React.Component {
     // }
 
     stopAlarms(){
-      j = 0;
+
       this.state.alarmSound.stop();
 
       const alarms = this.props.alarms;
@@ -174,7 +174,8 @@ class FlatAlarmList extends React.Component {
           this.props.actions.editAlarm(disabledAlarms[index]);
         }
       }
-      this.setState({ringingArray:[]});
+
+      this.setState({ringingArray:[]},() => {j = 0;});
       //TODO: All alarms that were enabled need a temporary flag to say that they have gone off for today.
     }
 
@@ -185,18 +186,18 @@ class FlatAlarmList extends React.Component {
     //   this.setState({ringingArray: ringingArray});
     // }
 
-    fetchAlarmsFromStore(nextProps){
-      let alarms = this.props.alarms;
-
-      if(nextProps)
-      {
-        alarms = nextProps.alarms;
-      }
-      this.setState({
-        alarms: alarms,
-        showProgress: false
-      });
-    }
+    // fetchAlarmsFromStore(nextProps){
+    //   let alarms = this.props.alarms;
+    //
+    //   if(nextProps)
+    //   {
+    //     alarms = nextProps.alarms;
+    //   }
+    //   this.setState({
+    //     alarms: alarms,
+    //     showProgress: false
+    //   });
+    // }
 
     pressRow(rowData){
       // navigator.geolocation.getCurrentPosition(

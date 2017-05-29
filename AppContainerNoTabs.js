@@ -50,8 +50,14 @@ class AppContainer extends Component {
       this.refs.alarmNav.push({
         component: Alarm,
         title: 'Add Alarm',
+        rightButtonTitle: 'Done',
+        onRightButtonPress: () => this._handleBack(),
         passProps: { myProp: 'genius' },
       });
+    }
+
+    _handleBack() {
+      this.refs.alarmNav.pop();
     }
 
     render(){
@@ -78,7 +84,7 @@ class AppContainer extends Component {
               initialRoute={{
                   component: FlatListContainer,
                   title: 'Geolarm Clock',
-                  backButtonTitle: "Done",
+                  backButtonTitle: "",
                   rightButtonTitle: '+',
                   tintColor: "rgb(244, 161, 65)",
                   barTintColor: 'rgba(19, 20, 29, 0.84)',
