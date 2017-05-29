@@ -251,7 +251,11 @@ class AlarmContainerWizard extends React.Component {
   finishJourneySetUp(){
     this.calculateJourneyTime();
     // this.setState({showSummary: true});
-    this.setState({addingArrivalTime: true});
+    const currentAlarmDate = this.state.alarm.time || new Date.now().setHours(9).setMinutes(0).setSeconds(0).setMilliseconds(0);
+    const journeyTime = this.state.alarm.journey.expectedJourneyLength || 15;
+    const noOfMinsToAdd = 30 + journeyTime;
+    const newDateObj = new Date(currentAlarmDate.getTime() + noOfMinsToAdd*60000);
+    this.setState({addingArrivalTime: true, datePickerDate: newDateObj});
     this.props.navigator.pop();
   }
 
@@ -387,13 +391,15 @@ class AlarmContainerWizard extends React.Component {
         <View
           style={styles.container}
         >
-          {(this.state.addingAlarm || this.state.addingArrivalTime) && (<DatePickerIOS
-            date={this.state.datePickerDate}
-            mode={this.state.dateMode}
-            timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
-            onDateChange={this.onDateChange}
-            style={styles.datePicker}
-          />)}
+          {(this.state.addingAlarm || this.state.addingArrivalTime) && (
+            <DatePickerIOS
+              date={this.state.datePickerDate}
+              mode={this.state.dateMode}
+              timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
+              onDateChange={this.onDateChange}
+              style={styles.datePicker}
+            />
+          )}
           {this.state.addingAlarm &&
             <View>
               <TouchableHighlight
@@ -419,11 +425,14 @@ class AlarmContainerWizard extends React.Component {
                   style={styles.buttondanger}>
                   <Text style={styles.buttonText}>Delete Destination Time</Text>
               </TouchableHighlight>
-              <Switch
-                value={this.state.alarm.offWhenUpToggle}
-                onTintColor="rgba(228, 122, 11, 0.78)"
-                onValueChange={(value) => this.toggleChange(value)}
-              />
+              <View style={styles.switchContainer}>
+                <Text>Switch me off when I leave</Text>
+                <Switch
+                  value={this.state.alarm.offWhenUpToggle}
+                  onTintColor="rgba(228, 122, 11, 0.78)"
+                  onValueChange={(value) => this.toggleChange(value)}
+                />
+              </View>
             </View>
           }
 
@@ -434,11 +443,6 @@ class AlarmContainerWizard extends React.Component {
                   style={styles.button}>
                   <Text style={styles.buttonText}>Select Journey</Text>
               </TouchableHighlight>
-              {/*<TouchableHighlight
-                  onPress={this.calculateJourneyTime}
-                  style={styles.button}>
-                  <Text style={styles.buttonText}>Recalculate Journey</Text>
-              </TouchableHighlight>*/}
             </View>)
           }
           {
@@ -490,6 +494,15 @@ let styles = StyleSheet.create({
         padding: 10,
         alignItems: 'center',
         flex: 1
+    },
+    switchContainer: {
+      flex: 1,
+      flexDirection: "row",
+      padding: 10,
+      justifyContent: "space-between"
+    },
+    switch: {
+
     },
     clock: {
         height: 150,

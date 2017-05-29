@@ -434,7 +434,7 @@ class AlarmContainer2 extends React.Component {
             onValueChange={(value) => this.toggleChange(value)}
           />
           <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
-          <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey && alarm.journe.journeyTime? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
+          <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey && alarm.journey.journeyTime? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
           {/*<Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey && alarm.journey.expectedJourneyLength? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>*/}
 
           <TouchableHighlight

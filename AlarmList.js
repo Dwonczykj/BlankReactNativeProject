@@ -100,6 +100,7 @@ class AlarmList extends React.Component {
         .map(alarmKey => {
           return {
             time: this.props.alarms[alarmKey].time,
+            enabled: this.props.alarms[alarmKey].enabled,
             id: alarmKey
           };
         });
@@ -109,12 +110,12 @@ class AlarmList extends React.Component {
       let itemsToAdd = [];
 
       for (let index = 0; index < identifiedAlarmTimesArray.length; index++) {
-        if(Math.abs(identifiedAlarmTimesArray[index].time - currentDateTime) < 1000)
+        if(identifiedAlarmTimesArray[index].enabled && Math.abs(identifiedAlarmTimesArray[index].time - currentDateTime) < 1000)
         {
-          let newItem = identifiedAlarmTimesArray[index].id;
+          let alarmId = identifiedAlarmTimesArray[index].id;
           ringingArray = [
             ...ringingArray,
-            newItem
+            alarmId
           ];
         }
       }
@@ -153,29 +154,46 @@ class AlarmList extends React.Component {
       }
     }
 
-    displayClockAs24HourTime(){
-
-    }
+    // displayClockAs24HourTime(){
+    //
+    // }
 
     stopAlarms(){
       j = 0;
       this.state.alarmSound.stop();
+
+      const alarms = this.props.alarms;
+      const ringingAlarmIds = Object.keys(alarms).filter(alarmId => this.state.ringingArray.includes(alarmId));
+      const disabledAlarms = ringingAlarmIds.map(ringingId => {
+        let disabledAlarm = this.props.alarms[ringingId];
+        disabledAlarm.enabled = false;
+        return disabledAlarm;
+      });
+      for (var index in disabledAlarms) {
+        if (disabledAlarms.hasOwnProperty(index)){
+          this.props.actions.editAlarm(disabledAlarms[index]);
+        }
+      }
       this.setState({ringingArray:[]});
       //TODO: All alarms that were enabled need a temporary flag to say that they have gone off for today.
     }
 
-    turnOffAlarm(removeId){
-      let ringingArray = this.state.ringingArray
-        .filter(id => id !== removeId);
-      this.setState({ringingArray: ringingArray});
-    }
+    // turnOffAlarm(removeId){
+    //
+    //   let ringingArray = this.state.ringingArray
+    //     .filter(id => id !== removeId);
+    //   this.setState({ringingArray: ringingArray});
+    // }
 
     fetchAlarmsFromStore(nextProps){
       let alarms = this.props.alarms;
+
       if(nextProps)
       {
+        debugger;
         alarms = nextProps.alarms;
       }
+      
       console.log(this.state.dataSource
         .cloneWithRows(Object.values(alarms)/*,Object.keys(alarms)*/));
       this.setState({
