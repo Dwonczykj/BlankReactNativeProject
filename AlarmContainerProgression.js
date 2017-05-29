@@ -407,11 +407,11 @@ class AlarmContainerWizard extends React.Component {
                 style={styles.button}>
                 <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
               </TouchableHighlight>
-              <TouchableHighlight
+              {/*<TouchableHighlight
                   onPress={this.deleteAlarm}
                   style={styles.buttondanger}>
                   <Text style={styles.buttonText}>Delete Alarm</Text>
-              </TouchableHighlight>
+              </TouchableHighlight>*/}
             </View>}
           {this.state.addingArrivalTime &&
             <View>

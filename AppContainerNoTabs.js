@@ -37,6 +37,7 @@ const store = configureStore(InitialState);
 // import MapContainer from './mapContainer';
 import Alarm from './AlarmContainerProgression';
 import AlarmList from './AlarmList';
+import FlatListContainer from './FlatListContainer';
 
 
 class AppContainer extends Component {
@@ -75,7 +76,7 @@ class AppContainer extends Component {
               tintColor="rgb(244, 161, 65)"
               titleTextColor="rgb(244, 161, 65)"
               initialRoute={{
-                  component: AlarmList,
+                  component: FlatListContainer,
                   title: 'Geolarm Clock',
                   backButtonTitle: "Done",
                   rightButtonTitle: '+',
