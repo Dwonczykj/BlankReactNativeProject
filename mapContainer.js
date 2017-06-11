@@ -373,7 +373,7 @@ export default class MapContainer extends React.Component {
                 coordinate={marker.location.coordinate}
                 title={marker.title}
                 description={marker.description}
-                image={marker.start?require("./img/markers/real-estate.png"):require("./img/markers/business.png")}
+                image={marker.start?require("./img/Markers/business.png"):require("./img/Markers/business.png")}
                 centerOffset={{x:0,y:-11}}
 
                 style={styles.marker}

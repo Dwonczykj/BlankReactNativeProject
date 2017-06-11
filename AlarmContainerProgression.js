@@ -13,6 +13,7 @@ import AlarmActions from './Actions/alarmActions';
 import Heading from './Common/Header';
 import MapContainer from './mapContainer';
 import newGuid from './Common/Guid';
+import JourneyListContainer from './JourneyListContainer';
 
 class AlarmContainerWizard extends React.Component {
   constructor(props){
@@ -437,12 +438,22 @@ class AlarmContainerWizard extends React.Component {
           }
 
           {!this.state.addingAlarm && !this.state.addingArrivalTime && !this.state.showSummary && (
-            <View>
-              <TouchableHighlight
-                  onPress={this.addJourney}
-                  style={styles.button}>
-                  <Text style={styles.buttonText}>Select Journey</Text>
-              </TouchableHighlight>
+            <View style={styles.addingJourneyView}>
+              <View style={styles.button}>
+                <TouchableHighlight
+                    onPress={this.addJourney}
+                    style={styles.button}>
+                    <Text style={styles.buttonText}>New Journey</Text>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.addingJourneyList}>
+                <JourneyListContainer
+                    editAlarm={this.props.actions.editAlarm}
+                    alarms={this.props.state}
+                    currentAlarmId={this.state.currentAlarmId}
+                    showArrivalTime={() => this.setState({addingArrivalTime: true})}
+                />
+              </View>
             </View>)
           }
           {
@@ -504,6 +515,17 @@ let styles = StyleSheet.create({
     switch: {
 
     },
+    addingJourneyView: {
+      flex: 1,
+      alignItems: "stretch",
+      flexDirection: "column",
+      width: 400
+    },
+    addingJourneyList: {
+      alignSelf: "stretch",
+      bottom: 5,
+      
+    },
     clock: {
         height: 150,
         width: 150,
@@ -523,10 +545,13 @@ let styles = StyleSheet.create({
     },
     button: {
         height: 50,
+        maxWidth: 200,
         backgroundColor: '#48BBEC',
         borderColor: '#48BBEC',
-        alignSelf: 'stretch',
+        alignSelf: 'center',
         marginTop: 10,
+        marginBottom: 10,
+        padding: 5,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 5
