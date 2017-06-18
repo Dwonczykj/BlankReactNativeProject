@@ -339,6 +339,21 @@ export default class MapContainer extends React.Component {
     return Math.round(length * percentage);
   }
 
+  toggleMarkerType(key){
+
+    let journeyMarkers = this.state.journeyMarkers;
+    let currentMarker = journeyMarkers.find(marker => marker.key === key);
+    let currentSetUp = currentMarker.start;
+    let replacementMarker = {
+      key: id++,
+      location: currentMarker.location,
+      start: !currentSetUp,
+      title: currentMarker.title,
+      description: currentMarker.description
+    };
+    this.setState({journeyMarkers: [replacementMarker], selectingStartLocation: currentSetUp});
+  }
+
   // provider={MapView.PROVIDER_GOOGLE}
 
   //render a search Bar
@@ -373,11 +388,20 @@ export default class MapContainer extends React.Component {
                 coordinate={marker.location.coordinate}
                 title={marker.title}
                 description={marker.description}
-                image={marker.start?require("./img/Markers/business.png"):require("./img/Markers/business.png")}
+                image={marker.start?require("./img/Markers/66x88/real-estate.v3.png"):require("./img/Markers/66x88/business.v1.png")}
                 centerOffset={{x:0,y:-11}}
 
                 style={styles.marker}
-              />
+              >
+                <MapView.Callout
+                  style={styles.callout}
+                  onPress={() => this.toggleMarkerType(marker.key)}
+                >
+                  <View style={styles.callout} >
+                    <Text style={styles.calloutText}>{marker.start?'Change to End':'Change to Start'}?</Text>
+                  </View>
+                </MapView.Callout>
+              </MapView.Marker>
             )
           })}
           {this.state.markers.map(marker => {
@@ -605,14 +629,10 @@ var styles = StyleSheet.create({
       height: 25,
     },
     journeyMarker: {
-      width: 80,
-      height: 80,
-      resizeMode: "contain"
+
     },
     lunchMarker: {
-      width: 5,
-      height: 5,
-      resizeMode: "contain"
+
     },
     callout: {
       width: 200,
