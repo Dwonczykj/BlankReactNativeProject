@@ -40,12 +40,16 @@ export default class MyList extends React.PureComponent {
     this.setState((state) => {
       // copy the map rather than modifying state.
       const selected = new Map(state.selected);
-      selected.set(id, !selected.get(id)); // toggle
+      selected.set(id, !selected.get(id));// toggle
+      if(this.props.selectRow)
+      {
+        this.props.selectRow(this.props.alarms[id]);
+      }
       return {selected};
     });
   };
 
-  _renderItem = ({item,index}) => {    
+  _renderItem = ({item,index}) => {
     return (
       <FlatListItem
         id={item.id}

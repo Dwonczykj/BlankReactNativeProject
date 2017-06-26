@@ -59,6 +59,7 @@ class FlatAlarmList extends React.Component {
         };
 
         this.soundTheAlarm = this.soundTheAlarm.bind(this);
+        this.pressRow = this.pressRow.bind(this);
         this.displayClockSectionAs12HourTime = this.displayClockSectionAs12HourTime.bind(this);
         this.toggleChange = this.toggleChange.bind(this);
     }
@@ -226,7 +227,7 @@ class FlatAlarmList extends React.Component {
       //         }
       //     });
       //   }
-      // );
+      // );      
       this.props.navigator.push({
           title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
           component: AlarmContainer,
@@ -267,6 +268,7 @@ class FlatAlarmList extends React.Component {
               alarms={this.props.alarms}
               displayClockSectionAs12HourTime={this.displayClockSectionAs12HourTime}
               toggleAlarm={this.toggleChange}
+              selectRow={this.pressRow}
             />
             {this.state.ringingArray && this.state.ringingArray.length > 0 && j == 0
               &&
