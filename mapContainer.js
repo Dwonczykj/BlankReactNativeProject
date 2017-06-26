@@ -351,7 +351,16 @@ export default class MapContainer extends React.Component {
       title: currentMarker.title,
       description: currentMarker.description
     };
-    this.setState({journeyMarkers: [replacementMarker], selectingStartLocation: currentSetUp});
+    this.setState({journeyMarkers: [replacementMarker], selectingStartLocation: currentSetUp},
+    () => {
+      if(currentSetUp)
+      {
+        this.addLunchPlacesToMapAround(currentMarker.location.coordinate);
+      }
+      else {
+        this.setState({lunchMarkers: []});
+      }
+    });
   }
 
   // provider={MapView.PROVIDER_GOOGLE}

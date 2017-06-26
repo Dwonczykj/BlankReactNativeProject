@@ -40,6 +40,7 @@ class AlarmContainerWizard extends React.Component {
 
     //TODO: create a binder function which takes an array of functions as the parameter.
     this.addAlarm = this.addAlarm.bind(this);
+    this.addAlarmNoJourney = this.addAlarmNoJourney.bind(this);
     this.editAlarm = this.editAlarm.bind(this);
     this.stopAlarm = this.stopAlarm.bind(this);
     this.setDateMode = this.setDateMode.bind(this);
@@ -146,6 +147,21 @@ class AlarmContainerWizard extends React.Component {
     });
     this.props.actions.editAlarm(alarm);
     console.log(`alarm added for ${t}`);
+  }
+
+  addAlarmNoJourney(){
+    let t = this.state.datePickerDate;
+    let alarm = this.state.alarm;
+    alarm.time = t;
+    alarm.enabled = true;
+
+    this.setState({
+      alarm1: t,
+      alarm: alarm
+    });
+    this.props.actions.editAlarm(alarm);
+    console.log(`alarm added for ${t}`);
+    this.props.navigator.pop();
   }
 
   editAlarm(){
@@ -404,9 +420,14 @@ class AlarmContainerWizard extends React.Component {
           {this.state.addingAlarm &&
             <View>
               <TouchableHighlight
-                onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+                onPress={this.state.addingAlarm?this.addAlarmNoJourney:this.startAddingAlarm}
                 style={styles.button}>
                 <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+                style={styles.button}>
+                <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm & Add Journey":"Add Alarm"}</Text>
               </TouchableHighlight>
               {/*<TouchableHighlight
                   onPress={this.deleteAlarm}
@@ -524,7 +545,7 @@ let styles = StyleSheet.create({
     addingJourneyList: {
       alignSelf: "stretch",
       bottom: 5,
-      
+
     },
     clock: {
         height: 150,
