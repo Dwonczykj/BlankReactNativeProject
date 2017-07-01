@@ -6,6 +6,18 @@ var encoding = require('NativeModules').Encoding;
 const authKey = 'auth';
 const userKey = 'user';
 
+export const fetchAndIncrementCount = (request, requestCount) => {
+  if(requestCount < 50)
+  {
+    return fetch(request);
+  }
+  else
+  {
+    return new Promise((resolve,reject) => {
+      resolve();
+    })
+  }
+}
 
 export const getAuthInfo = (cb) => {
     AsyncStorage.multiGet([authKey, userKey], (err, val)=> {

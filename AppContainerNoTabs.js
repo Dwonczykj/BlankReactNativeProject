@@ -18,6 +18,7 @@ import { Provider } from 'react-redux';
 // import reducer from './Store/index';
 import InitialState from './Store/reducers/InitialState';
 import {configureStore} from './Store/configureStore';
+import * as ActionTypes from './Actions/actionTypes';
 
 // const store = createStore(
 //   reducer,
@@ -44,6 +45,22 @@ class AppContainer extends Component {
     constructor(props){
         super(props);
 
+        this.decrementCount = this.decrementCount.bind(this);
+    }
+
+    componentDidMount() {
+      this.timerForRequests = setInterval(
+        () => this.decrementCount(),
+        10000
+      );
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.timerForRequests);
+    }
+
+    decrementCount() {
+      store.dispatch({type: ActionTypes.DECREMENT_REQUEST_COUNT});
     }
 
     _handleNavigationRequest() {

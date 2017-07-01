@@ -1,3 +1,4 @@
 export default {
-  alarms: {}
+  alarms: {},
+  requestCount: 0
 };
