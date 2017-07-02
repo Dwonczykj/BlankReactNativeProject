@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {connect} from 'react-redux';
 import {
   ActivityIndicator,
   DatePickerIOS,
@@ -8,10 +8,11 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import APIActions from './Actions.fetchRequestActions';
 import Heading from './Common/Header';
 import MapContainer from './mapContainer';
 
-export default class extends React.Component {
+export class AlarmContainer extends React.Component {
   constructor(props){
     super(props);
 
@@ -134,7 +135,7 @@ export default class extends React.Component {
       let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&key=775a1097e1a1565c121e594df7b9387b`;
       this.setState({showProgress: true});
 
-      fetch(request)
+      this.props.apiActions.fetchRequest(request)
         .then((response)=> {
             if(response.status >= 200 && response.status < 300){
                 return response;
@@ -226,6 +227,24 @@ export default class extends React.Component {
       );
   }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    requestCount: store.requestCount
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    apiActions: APIActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AlarmContainer);
 
 let styles = StyleSheet.create({
     container: {

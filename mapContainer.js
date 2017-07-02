@@ -1,7 +1,9 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import Geocoder from 'react-native-geocoder';
+// import Geocoder from 'react-native-geocoder';
 import MapSearchBox from './mapSearchBox';
+import APIActions from './Actions/fetchRequestActions';
+import {connect} from 'react-redux';
 
 import {
   ActivityIndicator,
@@ -15,7 +17,7 @@ import {
 } from 'react-native';
 import PriceMarker from './PriceMarker';
 
-Geocoder.fallbackToGoogle("AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c");
+// Geocoder.fallbackToGoogle("AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c");
 
 const { width, height } = Dimensions.get('window');
 
@@ -108,7 +110,7 @@ export default class MapContainer extends React.Component {
       title: "normal",
       description: "yo"
     }
-    Geocoder.geocodePosition(convertEventCoordinateToGeocodeCoord(event.nativeEvent.coordinate))
+    this.props.actions.geocodePosition(convertEventCoordinateToGeocodeCoord(event.nativeEvent.coordinate))
       .then(res => {
         newMarker.location = res[0];
         markers = [...markers,newMarker];
@@ -161,7 +163,7 @@ export default class MapContainer extends React.Component {
   addLunchPlacesToMapAround(coordinate){
     let request = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinate.latitude},${coordinate.longitude}&radius=500&type=restaurant&key=AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c`;
 
-    fetch(request)
+    this.props.actions.fetchRequest(request)
       .then((response)=> {
           if(response.status >= 200 && response.status < 300){
               return response;
@@ -217,7 +219,7 @@ export default class MapContainer extends React.Component {
       coordinate: event.nativeEvent.coordinate,
       info: null
     }
-    Geocoder.geocodePosition(geoloc)
+    this.props.actions.geocodePosition(geoloc)
       .then(res => {
           location.info = res;
           if(this.state.selectingStartLocation && this.props.onStart)
@@ -291,7 +293,7 @@ export default class MapContainer extends React.Component {
     };
     let markers = this.state.markers
 
-    Geocoder.geocodePosition(coordinate)
+    this.props.actions.geocodePosition(coordinate)
       .then(res => {
         newMarker.location.info = res[0];
         newMarker.location.coordinate = {
@@ -515,6 +517,24 @@ export default class MapContainer extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    requestCount: store.requestCount
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    actions: APIActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MapContainer);
 
 var styles = StyleSheet.create({
     old_container: {

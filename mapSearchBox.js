@@ -10,10 +10,12 @@ import {
   View
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import {connect} from 'react-redux';
+import APIActions from 'Actions/fetchRequestActions';
 
 import * as globals from './Common/globals';
 
-export default class MapSearchBox extends React.Component {
+export class MapSearchBox extends React.Component {
   constructor(props){
     super(props);
     this.state= {
@@ -38,7 +40,7 @@ export default class MapSearchBox extends React.Component {
     let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${this.replaceSpacesWithPlusSign(queryString)}&key=${globals.mapsAPIKey}`;
     this.props.showProgress && this.props.showProgress(true);
 
-    fetch(request)
+    this.props.apiActions.fetchRequest(request)
       .then((response)=> {
           this.props.showProgress && this.props.showProgress(false);
           if(response.status >= 200 && response.status < 300){
@@ -86,3 +88,21 @@ export default class MapSearchBox extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    requestCount: store.requestCount
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    apiActions: APIActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MapSearchBox);

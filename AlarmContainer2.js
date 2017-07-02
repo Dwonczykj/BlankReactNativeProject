@@ -13,6 +13,7 @@ import AlarmActions from './Actions/alarmActions';
 import Heading from './Common/Header';
 import MapContainer from './mapContainer';
 import newGuid from './Common/Guid';
+import APIActions from './Actions/fetchRequestActions';
 
 class AlarmContainer2 extends React.Component {
   constructor(props){
@@ -267,7 +268,7 @@ class AlarmContainer2 extends React.Component {
       let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${alarm.journey.journeyStart.coordinate.latitude},${alarm.journey.journeyStart.coordinate.longitude}&endcoord=${alarm.journey.destination.coordinate.latitude},${alarm.journey.destination.coordinate.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
       this.setState({showProgress: true});
 
-      fetch(request)
+      this.props.apiActions.fetchRequest(request)
         .then((response)=> {
             if(response.status >= 200 && response.status < 300){
                 return response;
@@ -471,7 +472,8 @@ const mapStateToProps = (store) =>
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    actions: AlarmActions(dispatch)
+    actions: AlarmActions(dispatch),
+    apiActions: APIActions(dispatch)
   }
 };
 

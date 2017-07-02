@@ -1,5 +1,6 @@
 import React from 'react';
 import MapContainer from './mapContainer';
+import {connect} from 'react-redux';
 
 import {
   ActivityIndicator,
@@ -9,6 +10,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import APIActions from './Actions/fetchRequestActions';
 
 class JourneyTimerContainer extends React.Component {
   constructor(props){
@@ -33,7 +35,7 @@ class JourneyTimerContainer extends React.Component {
     let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&key=775a1097e1a1565c121e594df7b9387b`;
     this.setState({showProgress: true});
 
-    fetch(request)
+    this.props.apiActions.fetchRequest(request)
       .then((response)=> {
         debugger;
           if(response.status >= 200 && response.status < 300){
@@ -129,6 +131,24 @@ class JourneyTimerContainer extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    requestCount: store.requestCount
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    apiActions: APIActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(JourneyTimerContainer);
 
 var styles = StyleSheet.create({
     container: {
