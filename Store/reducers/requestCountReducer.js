@@ -9,7 +9,7 @@ export const requestCount = (state = InitialState.requestCount, action) => {
         return state+1;
 
     case types.DECREMENT_REQUEST_COUNT:
-        return state-1;
+        return state-1<1?0:state-1;
 
     default:
       return state || 0;

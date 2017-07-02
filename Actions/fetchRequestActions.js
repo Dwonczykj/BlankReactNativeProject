@@ -7,13 +7,37 @@ Geocoder.fallbackToGoogle("AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c");
 
 const fetchRequestActions = (dispatch) => {
 
-  const fetchRequest = (request) => {
-    dispatch({type: types.EXTERNAL_FETCH_REQUEST, data: request})
+  const fetchRequest = (request,requestCount=50) => {
+    // dispatch({type: types.EXTERNAL_FETCH_REQUEST, data: request})
+    if(requestCount<51)
+    {
+      dispatch({type: types.INCREMENT_REQUEST_COUNT});
+      return fetch(request);
+    }
+    else
+    {
+      return new Promise((resolve,reject)=>{
+        return resolve({
+          status: 900
+        });
+      });
+    }
   }
 
-  const geocodePosition = (coordinate) => {
-    dispatch({type: types.INCREMENT_REQUEST_COUNT});
-    return Geocoder.geocodePosition(coordinate);
+  const geocodePosition = (coordinate,requestCount=50) => {
+    if(requestCount<51)
+    {
+      dispatch({type: types.INCREMENT_REQUEST_COUNT});
+      return Geocoder.geocodePosition(coordinate);
+    }
+    else
+    {
+      return new Promise((resolve,reject)=>{
+        return reject({
+          status: 900
+        });
+      });
+    }
   }
 
   const geocodeAddress = (stringAddress) => {

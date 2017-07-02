@@ -10,7 +10,8 @@ import {
   TouchableHighlight,
   StyleSheet
 } from 'react-native';
-
+import {connect} from 'react-redux';
+import APIActions from './Actions/fetchRequestActions';
 
 class SearchResults extends Component {
     constructor(props){
@@ -35,7 +36,7 @@ class SearchResults extends Component {
         var url = 'https://api.github.com/search/repositories?q=' +
             encodeURIComponent(this.state.searchQuery);
 
-        fetch(url)
+        this.props.actions.fetchRequest(url)
             .then((response)=> response.json())
             .then((responseData)=> {
                 this.setState({
@@ -130,6 +131,24 @@ class SearchResults extends Component {
       );
     }
 }
+
+const mapStateToProps = (store) =>
+{
+  return {
+    requestCount: store.requestCount
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    apiActions: APIActions(dispatch)
+  }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SearchResults);
 
 var styles = StyleSheet.create({
     repoCell: {

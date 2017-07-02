@@ -9,9 +9,9 @@ import offlineConfig from 'redux-offline/lib/defaults';
 // import * as Store from './ts/store';
 import reducer from './reducers/index';
 import {fetchAndIncrementCount} from '../AuthService';
-import * as ActionTypes from './Actions/actionTypes';
+import * as ActionTypes from '../Actions/actionTypes';
 
-function myAPIServiceMiddleware(myService) {
+function myAPIServiceMiddleware() {
   return ({ dispatch, getState }) => next => action => {
     if (action.type == ActionTypes.EXTERNAL_FETCH_REQUEST) {
       fetchAndIncrementCount(action.data,getState().requestCount)
@@ -25,7 +25,7 @@ function myAPIServiceMiddleware(myService) {
   }
 }
 
-const APIServiceMiddleware = myAPIServiceMiddleware(myService)
+const APIServiceMiddleware = myAPIServiceMiddleware()
 // const store = createStore(reducer, applyMiddleware(serviceMiddleware))
 
 const config = {

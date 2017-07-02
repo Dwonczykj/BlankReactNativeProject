@@ -36,7 +36,7 @@ let defaults = {
 const timeout = 4000;
 let animationTimeout;
 
-export default class MapContainer extends React.Component {
+class MapContainer extends React.Component {
   constructor(props){
     super(props);
 
@@ -171,7 +171,8 @@ export default class MapContainer extends React.Component {
 
           throw {
               badCredentials: response.status == 401,
-              unknownError: response.status != 401
+              unknownError: response.status != 401,
+              requestCountExceeded: response.status == 900
           }
       })
       .then((response)=> {
@@ -236,7 +237,14 @@ export default class MapContainer extends React.Component {
             return this.props.onEnd(location);
           }
       })
-      .catch(err => console.log(err));//TODO: need error handling in here for user.
+      .catch(err => {
+        if(err.status == 900)
+        {
+          console.log("Request count exceeded.");
+        }else{
+          console.log(err)
+        }
+      });//TODO: need error handling in here for user.
 
     // // Address Geocoding
     // Geocoder.geocodeAddress('New York').then(res => {
@@ -399,7 +407,7 @@ export default class MapContainer extends React.Component {
                 coordinate={marker.location.coordinate}
                 title={marker.title}
                 description={marker.description}
-                image={marker.start?require("./img/Markers/66x88/real-estate.v3.png"):require("./img/Markers/66x88/business.v1.png")}
+                image={marker.start?require("./img/markers/66x88/real-estate.v3.png"):require("./img/markers/66x88/business.v1.png")}
                 centerOffset={{x:0,y:-11}}
 
                 style={styles.marker}

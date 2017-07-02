@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import {connect} from 'react-redux';
-import APIActions from 'Actions/fetchRequestActions';
+import APIActions from './Actions/fetchRequestActions';
 
 import * as globals from './Common/globals';
 
