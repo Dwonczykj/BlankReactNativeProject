@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: "rgba(52, 48, 70, 0.92)",
   },
   welcome: {
     fontSize: 20,
@@ -95,6 +95,8 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  loader: {
+  }
 });
 
 AppRegistry.registerComponent('BlankReactNativeProject', () => BlankReactNativeProject);
