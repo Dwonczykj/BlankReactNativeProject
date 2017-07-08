@@ -40,6 +40,22 @@ const fetchRequestActions = (dispatch) => {
     }
   }
 
+  const getCurrentPosition = (navigator,successcb,errorcb) => {
+    if(requestCount<51)
+    {
+      dispatch({type: types.INCREMENT_REQUEST_COUNT});
+      return navigator.geolocation.getCurrentPosition(successcb,errorcb);
+    }
+    else
+    {
+      return new Promise((resolve,reject)=>{
+        return reject({
+          status: 900
+        });
+      });
+    }
+  }
+
   const geocodeAddress = (stringAddress) => {
     throw new Exception("This is not implemented.");
     // dispatch({type: types.INCREMENT_REQUEST_COUNT});
@@ -47,7 +63,8 @@ const fetchRequestActions = (dispatch) => {
 
   return {
     fetchRequest: fetchRequest,
-    geocodePosition: geocodePosition
+    geocodePosition: geocodePosition,
+    getCurrentPosition: getCurrentPosition
   };
 };
 

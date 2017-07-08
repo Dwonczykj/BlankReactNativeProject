@@ -60,7 +60,11 @@ class AppContainer extends Component {
     }
 
     decrementCount() {
-      store.dispatch({type: ActionTypes.DECREMENT_REQUEST_COUNT});
+      if(store.getState().requestCount > 0)
+      {
+        store.dispatch({type: ActionTypes.DECREMENT_REQUEST_COUNT});
+      }
+      // store.dispatch({type: ActionTypes.DECREMENT_REQUEST_COUNT});
     }
 
     _handleNavigationRequest() {
@@ -92,7 +96,7 @@ class AppContainer extends Component {
           />*/}
           <NavigatorIOS
               style={{
-                  flex: 1
+                  flex: 1,
               }}
               ref='alarmNav'
               barTintColor='rgba(19, 20, 29, 0.84)'

@@ -37,7 +37,9 @@ export class MapSearchBox extends React.Component {
     const queryString = event.nativeEvent.text;
 
 
-    let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${this.replaceSpacesWithPlusSign(queryString)}&key=${globals.mapsAPIKey}`;
+    let request = `https://maps.googleapis.com/maps/api/geocode/json?address=
+      ${this.replaceSpacesWithPlusSign(queryString)}&
+      key=${globals.mapsAPIKey}`;
     this.props.showProgress && this.props.showProgress(true);
 
     this.props.apiActions.fetchRequest(request)

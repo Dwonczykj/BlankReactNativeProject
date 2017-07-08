@@ -22,9 +22,10 @@ const item = ({id, alarm, onPressItem, selected}) => {
           flexDirection: 'row',
           padding: 20,
           alignItems: 'center',
-          borderColor: '#D7D7D7',
+          justifyContent: 'center',
+          borderColor: 'transparent',
           borderBottomWidth: 1,
-          backgroundColor: "rgba(52, 48, 70, 0.92)",
+          backgroundColor: "rgba(52, 48, 70, 0)",
 
       }}>
           {/*}<Image

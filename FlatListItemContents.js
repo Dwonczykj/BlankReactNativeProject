@@ -22,7 +22,7 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
           flexDirection: 'row',
           padding: 20,
           alignItems: 'center',
-          borderColor: '#D7D7D7',
+          borderColor: 'transparent',
           borderBottomWidth: 1,
           backgroundColor: "rgba(52, 48, 70, 0.92)",
 
@@ -76,7 +76,7 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
                       /*alarm.payload.ref.replace('refs/heads/', '')*/
                       alarm.journey &&
                       alarm.journey.expectedJourneyLength &&
-                      `${alarm.journey.expectedJourneyLength.toString()} mins`
+                      `${parseInt(alarm.journey.expectedJourneyLength).toString()} mins`
                   }
                 </Text>
               </View>

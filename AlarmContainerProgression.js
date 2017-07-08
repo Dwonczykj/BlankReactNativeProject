@@ -15,6 +15,7 @@ import MapContainer from './mapContainer';
 import newGuid from './Common/Guid';
 import JourneyListContainer from './JourneyListContainer';
 import APIActions from './Actions/fetchRequestActions';
+import * as globals from './Common/globals';
 
 class AlarmContainerWizard extends React.Component {
   constructor(props){
@@ -52,11 +53,12 @@ class AlarmContainerWizard extends React.Component {
     this.finishJourneySetUp = this.finishJourneySetUp.bind(this);
     this.calculateJourneyTime = this.calculateJourneyTime.bind(this);
     this.addArrivalTimeToJourney = this.addArrivalTimeToJourney.bind(this);
-    this.startAddingAlarm = this.startAddingAlarm.bind(this);
-    this.startAddingJourneyDestTime = this.startAddingJourneyDestTime.bind(this);
+    // this.startAddingAlarm = this.startAddingAlarm.bind(this);
+    // this.startAddingJourneyDestTime = this.startAddingJourneyDestTime.bind(this);
     this.deleteAlarm = this.deleteAlarm.bind(this);
     this.deleteJourneyTime = this.deleteJourneyTime.bind(this);
     this.toggleChange = this.toggleChange.bind(this);
+    this.showSummary = this.showSummary.bind(this);
   }
 
   getInitialAlarm(){
@@ -69,6 +71,7 @@ class AlarmContainerWizard extends React.Component {
         journeyStart: null,
         lunchMarkers: null
       },
+      journeyType: "transit",
       offWhenUpToggle: false,
       enabled: false
     };
@@ -92,7 +95,7 @@ class AlarmContainerWizard extends React.Component {
       () => this.tick(),
       1000
     );
-    this.setState({currentAlarmId: this.state.alarm.id})
+    this.setState({currentAlarmId: this.state.alarm.id});
   }
 
   componentWillUnmount() {
@@ -114,7 +117,17 @@ class AlarmContainerWizard extends React.Component {
   }
 
   onDateChange = (date) => {
-    this.setState({datePickerDate: date});
+    this.setState({datePickerDate: date}, () => {
+      if(this.state.addingAlarm)
+      {
+        this.addAlarmNoJourney(date);
+      }
+      else if(this.state.addingArrivalTime)
+      {
+        this.addArrivalTimeToJourney(date);
+      }
+    });
+
   };
 
   onTimezoneChange = (event) => {
@@ -125,33 +138,45 @@ class AlarmContainerWizard extends React.Component {
     this.setState({timeZoneOffsetInHours: offset});
   };
 
-  startAddingAlarm(){
-    this.setState({addingAlarm: true});
-  }
+  // startAddingAlarm(){
+  //   this.setState({addingAlarm: true},() => this.onDateChange(this.state.datePickerDate));
+  // }
 
-  startAddingJourneyDestTime(){
-    this.setState({addingArrivalTime: true});
-  }
+  // startAddingJourneyDestTime(){
+  //   this.setState({addingArrivalTime: true},() => this.onDateChange(this.state.datePickerDate));
+  //
+  // }
 
   addAlarm(){
-    this.setState({addingAlarm: false});
     let t = this.state.datePickerDate;
     let alarm = this.state.alarm;
     alarm.time = t;
     alarm.enabled = true;
 
-    this.setState({
-      addingAlarm:false,
-      addingArrivalTime: false,
-      alarm1: t,
-      alarm: alarm
-    });
+    let recentJourneyCount = Object.values(this.props.state).map(alarm => alarm.journey.destination!==null?1:0).reduce((pv, cv) => pv+cv, 0);
+    if(recentJourneyCount===0)
+    {
+      this.addJourney(alarm);
+      this.setState({
+        addingArrivalTime: false,
+        alarm1: t,
+        alarm: alarm
+      });
+    }
+    else {
+      this.setState({
+        addingAlarm:false,
+        addingArrivalTime: false,
+        alarm1: t,
+        alarm: alarm
+      });
+    }
     this.props.actions.editAlarm(alarm);
     console.log(`alarm added for ${t}`);
   }
 
-  addAlarmNoJourney(){
-    let t = this.state.datePickerDate;
+  addAlarmNoJourney(date){
+    let t = date;
     let alarm = this.state.alarm;
     alarm.time = t;
     alarm.enabled = true;
@@ -162,7 +187,6 @@ class AlarmContainerWizard extends React.Component {
     });
     this.props.actions.editAlarm(alarm);
     console.log(`alarm added for ${t}`);
-    this.props.navigator.pop();
   }
 
   editAlarm(){
@@ -243,16 +267,21 @@ class AlarmContainerWizard extends React.Component {
     this.props.actions.editAlarm(alarm);
   }
 
-  addArrivalTimeToJourney(){
+  addArrivalTimeToJourney(date){
     let alarm = this.state.alarm;
     alarm.journey.journeyTime = this.state.datePickerDate
     this.setState({
-      arrivalTime: this.state.datePickerDate,
-      addingArrivalTime: false,
-      showSummary: true,
+      arrivalTime: date,
       alarm: alarm
      });
     this.props.actions.editAlarm(alarm);
+  }
+
+  showSummary(){
+    this.setState({
+      addingArrivalTime: false,
+      showSummary: true,
+     });
   }
 
   deleteJourneyTime(){
@@ -273,7 +302,10 @@ class AlarmContainerWizard extends React.Component {
     const journeyTime = this.state.alarm.journey.expectedJourneyLength || 15;
     const noOfMinsToAdd = 30 + journeyTime;
     const newDateObj = new Date(currentAlarmDate.getTime() + noOfMinsToAdd*60000);
-    this.setState({addingArrivalTime: true, datePickerDate: newDateObj});
+    this.setState({
+      addingAlarm: false,
+      addingArrivalTime: true,
+      datePickerDate: newDateObj},() => this.onDateChange(this.state.datePickerDate));
     this.props.navigator.pop();
   }
 
@@ -282,50 +314,133 @@ class AlarmContainerWizard extends React.Component {
     return isoString.replace(/:/i, '%3A').replace(/:/i, '%3A');
   }
 
-  calculateJourneyTime(){
+  changeJourneyType(journeyType)
+  {
+    let alarm = this.props.state[this.state.currentAlarmId];
+    alarm.journeyType = journeyType;
+    this.props.actions.editAlarm(alarm);
+    this.calculateJourneyTime(journeyType);
+  }
+
+  calculateJourneyTime(journeyType="transit"){
     let arrTime = this.state.arrivalTime instanceof Date && this.state.arrivalTime;
     let time = arrTime || new Date();
     if(this.state.start && this.state.end)
     {
-      let request = `https://developer.citymapper.com/api/1/traveltime/?startcoord=${this.state.start.latitude},${this.state.start.longitude}&endcoord=${this.state.end.latitude},${this.state.end.longitude}&time=${this.formatISOForURL(time.toISOString())}&time_type=arrival&key=775a1097e1a1565c121e594df7b9387b`;
-      this.setState({showProgress: true});
+      let request = `https://maps.googleapis.com/maps/api/directions/json?`;
+      request += `origin=${this.state.start.latitude},${this.state.start.longitude}`
+      request += `&destination=${this.state.end.latitude},${this.state.end.longitude}`
+      request += `&arrival_time=1343641500`
+      request += `&key=${globals.mapsAPIKey}`;
 
-      this.props.apiActions.fetchRequest(request)
-        .then((response)=> {
-            if(response.status >= 200 && response.status < 300){
-                return response;
-            }
+      if(journeyType==="transit")
+      {
+        request = `https://developer.citymapper.com/api/1/traveltime/?`;
+        request += `startcoord=${this.state.start.latitude},${this.state.start.longitude}`
+        request += `&endcoord=${this.state.end.latitude},${this.state.end.longitude}`
+        request += `&time=${this.formatISOForURL(time.toISOString())}`
+        request += `&time_type=arrival`
+        request += `&key=${globals.citymapperAPIKey}`;
+        this.setState({showProgress: true});
 
-            throw {
-                badCredentials: response.status == 401,
-                unknownError: response.status != 401
-            }
-        })
-        .then((response)=> {
-            return response.json();
-        })
-        .then((results)=> {
-            this.setState({journeyTime: results["travel_time_minutes"],showProgress:false});
-            let alarm =  this.state.alarm;
-            alarm.journey.expectedJourneyLength = results["travel_time_minutes"];
-            this.props.actions.editAlarm(alarm);
-        })
-        .catch((err)=> {
-          debugger;
-          //TODO: show user that we couldnt calculate the journey time.
-            this.setState({showProgress: false, error: err});
-            return console.log(err);
-        });
-    }else
+        this.props.apiActions.fetchRequest(request)
+          .then((response)=> {
+              if(response.status >= 200 && response.status < 300){
+                  return response;
+              }
+
+              throw {
+                  badCredentials: response.status == 401,
+                  unknownError: response.status != 401
+              }
+          })
+          .then((response)=> {
+              return response.json();
+          })
+          .then((results)=> {
+              this.setState({journeyTime: results["travel_time_minutes"],showProgress:false});
+              let alarm =  this.state.alarm;
+              alarm.journey.expectedJourneyLength = results["travel_time_minutes"];
+              this.props.actions.editAlarm(alarm);
+          })
+          .catch((err)=> {
+            debugger;
+            //TODO: show user that we couldnt calculate the journey time.
+              this.setState({showProgress: false, error: err});
+              return console.log(err);
+          });
+      }
+      else
+      {
+        if(journeyType==="car")
+        {
+          request += "&mode=driving";
+        }
+        else if(journeyType==="cycle")
+        {
+          request += "&mode=bicylcing";
+        }
+        else if(journeyType==="walk")
+        {
+          request += "&mode=walking";
+        }
+        this.props.apiActions.fetchRequest(request)
+          .then((response)=> {
+              if(response.status >= 200 && response.status < 300){
+                  return response;
+              }
+
+              throw {
+                  badCredentials: response.status == 401,
+                  unknownError: response.status != 401
+              }
+          })
+          .then((response)=> {
+              return response.json();
+          })
+          .then((results)=> {
+              if(results.routes.length === 0)
+              {
+                throw {
+                  message: "no routes returned",
+                  status: results.status,
+                  error: results.error_message
+                }
+              }
+              let durationarray = results.routes.map(route => route.legs.map(leg => leg.duration.value).reduce((pv,cv)=> pv+cv,0));
+              let duration = Math.min(...durationarray);
+              this.setState({journeyTime: this.convertSecsToMins(duration),showProgress:false});
+              let alarm =  this.state.alarm;
+              alarm.journey.expectedJourneyLength = this.convertSecsToMins(duration);
+              this.props.actions.editAlarm(alarm);
+          })
+          .catch((err)=> {
+            debugger;
+            //TODO: show user that we couldnt calculate the journey time.
+              this.setState({showProgress: false, error: err});
+              return console.log(err);
+          });
+      }
+    }
+    else
     {
       //return start and end not set yet.
       this.setState({journeyTime: "Start and End need to be set!"})
     }
   }
 
-  addJourney(){
+  convertSecsToMins(secs){
+    return secs/60;
+  }
+
+  addJourney(alarm=null){
     let alarmKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
     let journey = alarmKey && this.props.state[alarmKey].journey;
+
+    if(journey === undefined)
+    {
+      journey = alarm.journey || {};
+    }
     // this.props.navigator.push({
     //     title: 'Journey Planner',
     //     component: MapContainer,
@@ -339,7 +454,7 @@ class AlarmContainerWizard extends React.Component {
     //       end: journey && journey.destination
     //     }
     // });
-
+    // this.props.apiActions.getCurrentPosition(navigator,
     navigator.geolocation.getCurrentPosition(
       (res) => {
         let currentLocation = {
@@ -420,15 +535,15 @@ class AlarmContainerWizard extends React.Component {
           )}
           {this.state.addingAlarm &&
             <View>
-              <TouchableHighlight
-                onPress={this.state.addingAlarm?this.addAlarmNoJourney:this.startAddingAlarm}
+              {/*<TouchableHighlight
+                onPress={() => this.props.navigator.pop()}
                 style={styles.button}>
-                <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
-              </TouchableHighlight>
+                <Text style={styles.buttonText}>Set Alarm</Text>
+              </TouchableHighlight>*/}
               <TouchableHighlight
-                onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+                onPress={this.addAlarm}
                 style={styles.button}>
-                <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm & Add Journey":"Add Alarm"}</Text>
+                <Text style={styles.buttonText}>Add Journey</Text>
               </TouchableHighlight>
               {/*<TouchableHighlight
                   onPress={this.deleteAlarm}
@@ -439,15 +554,37 @@ class AlarmContainerWizard extends React.Component {
           {this.state.addingArrivalTime &&
             <View>
               <TouchableHighlight
-                onPress={this.state.addingArrivalTime?this.addArrivalTimeToJourney:this.startAddingJourneyDestTime}
+                onPress={this.showSummary}
                 style={styles.button}>
-                <Text style={styles.buttonText}>{this.state.addingArrivalTime?"Set Destination Time":"Add Destination Time"}</Text>
+                <Text style={styles.buttonText}>Show Summary</Text>
               </TouchableHighlight>
-              <TouchableHighlight
+              {/*<TouchableHighlight
                   onPress={this.deleteJourneyTime}
                   style={styles.buttondanger}>
                   <Text style={styles.buttonText}>Delete Destination Time</Text>
-              </TouchableHighlight>
+              </TouchableHighlight>*/}
+              <View style={styles.rowOfButtons}>
+                <TouchableHighlight
+                  onPress={() => this.changeJourneyType("car")}
+                  style={alarm.journeyType==="car"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                  <Text style={styles.buttonText}>C</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={() => this.changeJourneyType("walk")}
+                  style={alarm.journeyType==="walk"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                  <Text style={styles.buttonText}>W</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={() => this.changeJourneyType("cycle")}
+                  style={alarm.journeyType==="cycle"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                  <Text style={styles.buttonText}>C</Text>
+                </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={() => this.changeJourneyType("transit")}
+                  style={alarm.journeyType==="transit"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                  <Text style={styles.buttonText}>T</Text>
+                </TouchableHighlight>
+              </View>
               <View style={styles.switchContainer}>
                 <Text>Switch me off when I leave</Text>
                 <Switch
@@ -523,7 +660,7 @@ export default connect(
 
 let styles = StyleSheet.create({
     container: {
-        backgroundColor: '#F5FCFF',
+        backgroundColor: "rgba(52, 48, 70, 0.92)",
         paddingTop: 100,
         padding: 10,
         alignItems: 'center',
@@ -534,6 +671,38 @@ let styles = StyleSheet.create({
       flexDirection: "row",
       padding: 10,
       justifyContent: "space-between"
+    },
+    rowOfButtons: {
+      flex: 1,
+      flexDirection: "row",
+      padding: 10,
+      justifyContent: "space-between"
+    },
+    journeyTypeButtonSelected: {
+      backgroundColor: '#48ec80',
+      borderColor: '#020608',
+      borderRadius: 5,
+      marginTop: 30,
+      marginBottom: 10,
+      padding: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 50,
+      minWidth: 50,
+      maxWidth: 50
+    },
+    journeyTypeButton: {
+      backgroundColor: '#48BBEC',
+      borderColor: '#48BBEC',
+      borderRadius: 5,
+      marginTop: 30,
+      marginBottom: 10,
+      padding: 5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 50,
+      minWidth: 50,
+      maxWidth: 50
     },
     switch: {
 
@@ -547,7 +716,9 @@ let styles = StyleSheet.create({
     addingJourneyList: {
       alignSelf: "stretch",
       bottom: 5,
-
+      marginTop: 20,
+      padding: 0,
+      borderColor: "rgba(52, 48, 70, 0.92)"
     },
     clock: {
         height: 150,
@@ -560,19 +731,21 @@ let styles = StyleSheet.create({
         borderRadius: 0,
     },
     datePicker: {
-      backgroundColor: '#F5FCFF',
-      height: 150,
+      backgroundColor: "rgba(52, 48, 70, 0)",
+      height: 225,
       width: 500,
       marginTop: 10,
-      marginBottom: 40
+      marginBottom: 10,
+      paddingBottom: 40
     },
     button: {
         height: 50,
-        maxWidth: 200,
+        maxWidth: 300,
+        minWidth: 300,
         backgroundColor: '#48BBEC',
         borderColor: '#48BBEC',
         alignSelf: 'center',
-        marginTop: 10,
+        marginTop: 30,
         marginBottom: 10,
         padding: 5,
         justifyContent: 'center',

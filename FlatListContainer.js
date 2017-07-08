@@ -227,7 +227,7 @@ class FlatAlarmList extends React.Component {
       //         }
       //     });
       //   }
-      // );      
+      // );
       this.props.navigator.push({
           title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
           component: AlarmContainer,
@@ -262,7 +262,8 @@ class FlatAlarmList extends React.Component {
       return (
         <View style={{
             flex: 1,
-            justifyContent: 'flex-start'
+            justifyContent: 'flex-start',
+            backgroundColor: "rgba(52, 48, 70, 0.92)"
         }}>
             <FlatListView
               alarms={this.props.alarms}

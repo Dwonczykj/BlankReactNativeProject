@@ -259,19 +259,36 @@ class MapContainer extends React.Component {
   makeMarkerAJourneyMarker(markerKey,location){
     let markers = this.state.markers;
 
-    if(this.state.selectingStartLocation && this.props.onStart)
-    {
-      this.addJourneyMarker(location.coordinate,true);
-      //make it specific to start//could have a list marker objects which contain the type of marker
-      this.props.onStart(location);
+    const geoloc = {
+      lat: location.coordinate.latitude,
+      lng: location.coordinate.longitude
     }
-    else if(!this.state.selectingStartLocation && this.props.onEnd)
-    {
-      this.addJourneyMarker(location.coordinate,false);
-      this.props.onEnd(location);
-    }
-    markers = markers.filter(marker => marker.key !== markerKey);
-    return this.setState({markers});
+    let loc = location;
+    this.props.actions.geocodePosition(geoloc)
+      .then(res => {
+          loc.info = res;
+          if(this.state.selectingStartLocation && this.props.onStart)
+          {
+            this.addJourneyMarker(loc,true);
+            //make it specific to start//could have a list marker objects which contain the type of marker
+            this.props.onStart(loc);
+          }
+          else if(!this.state.selectingStartLocation && this.props.onEnd)
+          {
+            this.addJourneyMarker(loc,false);
+            this.props.onEnd(loc);
+          }
+          markers = markers.filter(marker => marker.key !== markerKey);
+          return this.setState({markers});
+      })
+      .catch(err => {
+        if(err.status == 900)
+        {
+          console.log("Request count exceeded.");
+        }else{
+          console.log(err)
+        }
+      });//TODO: need error handling in here for user.
   }
 
   switchToStartChooser(){
@@ -399,6 +416,7 @@ class MapContainer extends React.Component {
           showsMyLocationButton
           loadingEnabled
           loadingIndicatorColor="#3bc91e"
+          loadingBackgroundColor="rgba(52, 48, 70, 0.92)"
         >
           {this.state.journeyMarkers.map(marker => {
             return marker.start != null && (
