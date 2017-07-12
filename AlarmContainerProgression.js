@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {
   ActivityIndicator,
   DatePickerIOS,
+  Platform,
   StyleSheet,
   Switch,
   Text,
@@ -16,6 +17,13 @@ import newGuid from './Common/Guid';
 import JourneyListContainer from './JourneyListContainer';
 import APIActions from './Actions/fetchRequestActions';
 import * as globals from './Common/globals';
+
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded
+} from 'react-native-admob';
 
 class AlarmContainerWizard extends React.Component {
   constructor(props){
@@ -37,7 +45,8 @@ class AlarmContainerWizard extends React.Component {
       arrivalTime: null,
       start: null,
       end: null,
-      journeyTime: "()"
+      journeyTime: "()",
+      showAd: false
     }
 
     //TODO: create a binder function which takes an array of functions as the parameter.
@@ -59,6 +68,8 @@ class AlarmContainerWizard extends React.Component {
     this.deleteJourneyTime = this.deleteJourneyTime.bind(this);
     this.toggleChange = this.toggleChange.bind(this);
     this.showSummary = this.showSummary.bind(this);
+    this.showAdBanner = this.showAdBanner.bind(this);
+    this.showSpinner = this.showSpinner.bind(this);
   }
 
   getInitialAlarm(){
@@ -96,10 +107,38 @@ class AlarmContainerWizard extends React.Component {
       1000
     );
     this.setState({currentAlarmId: this.state.alarm.id});
+
+    // AdMobRewarded.setTestDeviceID('EMULATOR');
+    // AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/1033173712');
+    //
+    // AdMobRewarded.addEventListener('rewardedVideoDidRewardUser',
+    //   (type, amount) => console.log('rewardedVideoDidRewardUser', type, amount)
+    // );
+    // AdMobRewarded.addEventListener('rewardedVideoDidLoad',
+    //   () => console.log('rewardedVideoDidLoad')
+    // );
+    // AdMobRewarded.addEventListener('rewardedVideoDidFailToLoad',
+    //   (error) => console.log('rewardedVideoDidFailToLoad', error)
+    // );
+    // AdMobRewarded.addEventListener('rewardedVideoDidOpen',
+    //   () => console.log('rewardedVideoDidOpen')
+    // );
+    // AdMobRewarded.addEventListener('rewardedVideoDidClose',
+    //   () => {
+    //     console.log('rewardedVideoDidClose');
+    //     AdMobRewarded.requestAd((error) => error && console.log(error));
+    //   }
+    // );
+    // AdMobRewarded.addEventListener('rewardedVideoWillLeaveApplication',
+    //   () => console.log('rewardedVideoWillLeaveApplication')
+    // );
+    //
+    // AdMobRewarded.requestAd((error) => error && console.log(error));
   }
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    AdMobRewarded.removeAllListeners();
   }
 
   tick() {
@@ -433,6 +472,10 @@ class AlarmContainerWizard extends React.Component {
     return secs/60;
   }
 
+  showSpinner(show){
+    this.setState({showProgress: show});
+  }
+
   addJourney(alarm=null){
     let alarmKey = Object.keys(this.props.state).find(x => x === this.state.currentAlarmId);
     let journey = alarmKey && this.props.state[alarmKey].journey;
@@ -517,6 +560,18 @@ class AlarmContainerWizard extends React.Component {
     this.props.actions.editAlarm(alarm);
   }
 
+  // showRewarded() {
+  //   AdMobRewarded.showAd((error) => error && console.log(error));
+  // }
+
+  showAdBanner(showAd){
+    this.setState({showAd: showAd});
+    setTimeout(
+      () => this.setState({showAd: false}),
+      5000
+    );
+  }
+
   //make calc journey button readonly unless jounery params are set.
   render(){
     const alarm = this.props.state[this.state.currentAlarmId];
@@ -524,6 +579,16 @@ class AlarmContainerWizard extends React.Component {
         <View
           style={styles.container}
         >
+          {this.state.showAd && (
+            <View style={styles.addContainer}>
+              <AdMobBanner
+              bannerSize="fullBanner"
+              adUnitID="ca-app-pub-3940256099942544/1033173712"
+              testDeviceID="EMULATOR"
+              didFailToReceiveAdWithError={(error) => console.log(error)}
+              />
+            </View>
+          )}
           {(this.state.addingAlarm || this.state.addingArrivalTime) && (
             <DatePickerIOS
               date={this.state.datePickerDate}
@@ -618,14 +683,19 @@ class AlarmContainerWizard extends React.Component {
           {
             this.state.showSummary && (
               <View>
-              <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
-              <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
-              <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey && alarm.journey.expectedJourneyLength? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
+                <Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
+                <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>
+                <Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey && alarm.journey.expectedJourneyLength? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>
                 {this.state.alarm.time && <TouchableHighlight
                     onPress={() => this.props.navigator.pop()}
                     style={styles.buttonSuccess}>
                     <Text style={styles.buttonText}>Done</Text>
                 </TouchableHighlight>}
+                <TouchableHighlight  style={styles.button}>
+                  <Text onPress={() => this.showAdBanner(true)} style={styles.buttonText}>
+                    Show Add
+                  </Text>
+                </TouchableHighlight>
               </View>
             )
           }
@@ -633,7 +703,7 @@ class AlarmContainerWizard extends React.Component {
               animating={this.state.showProgress}
               size="large"
               style={styles.loader}
-              />}
+            />}
         </View>
       );
   }
@@ -660,6 +730,7 @@ export default connect(
 
 let styles = StyleSheet.create({
     container: {
+        marginTop: (Platform.OS === 'ios') ? 30 : 10,
         backgroundColor: "rgba(52, 48, 70, 0.92)",
         paddingTop: 100,
         padding: 10,
@@ -671,6 +742,9 @@ let styles = StyleSheet.create({
       flexDirection: "row",
       padding: 10,
       justifyContent: "space-between"
+    },
+    addContainer: {
+      marginTop: -40
     },
     rowOfButtons: {
       flex: 1,

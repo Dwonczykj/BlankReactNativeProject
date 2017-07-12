@@ -75,7 +75,8 @@ class MapContainer extends React.Component {
       markers: [],
       journeyMarkers: markers,
       lunchMarkers: this.props.lunchMarkers?this.props.lunchMarkers:[],
-      selectingStartLocation: true
+      selectingStartLocation: true,
+      showProgress: false
     };
 
     this.onRegionChange = this.onRegionChange.bind(this);
@@ -102,7 +103,7 @@ class MapContainer extends React.Component {
   }
 
   addMarker(event){
-
+    this.showSpinner(true);
     let markers = this.state.markers;
     let newMarker = {
       key: id++,
@@ -115,13 +116,17 @@ class MapContainer extends React.Component {
         newMarker.location = res[0];
         markers = [...markers,newMarker];
         this.setState({ markers: markers });
+        this.showSpinner(false);
         return markers;
       })
-      .catch(res => console.log(res));
+      .catch(res => {
+        console.log(res)
+        this.showSpinner(false);
+      });
 
   }
 
-  addJourneyMarker(location,start)
+  addJourneyMarker(location,start,cb)
   {
     let journeyMarkers = this.state.journeyMarkers;
 
@@ -158,13 +163,18 @@ class MapContainer extends React.Component {
         }
       }
     );
+    if(cb)
+    {
+      cb();
+    }
   }
 
   addLunchPlacesToMapAround(coordinate){
     let request = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${coordinate.latitude},${coordinate.longitude}&radius=500&type=restaurant&key=AIzaSyD66bZZp986PADV5Epxe1eU6HJ0li2iq-c`;
-
+    this.showSpinner(true);
     this.props.actions.fetchRequest(request)
       .then((response)=> {
+          this.showSpinner(false);
           if(response.status >= 200 && response.status < 300){
               return response;
           }
@@ -199,6 +209,7 @@ class MapContainer extends React.Component {
       })
       .catch((err)=> {
         debugger;
+          this.showSpinner(false);
           this.setState({error: err});
           return console.log(err);
       });
@@ -211,7 +222,12 @@ class MapContainer extends React.Component {
     }
   }
 
+  showSpinner(show){
+    this.setState({showProgress: show});
+  }
+
   onLongPress(event){
+    this.showSpinner(true);
     const geoloc = {
       lat: event.nativeEvent.coordinate.latitude,
       lng: event.nativeEvent.coordinate.longitude
@@ -225,19 +241,20 @@ class MapContainer extends React.Component {
           location.info = res;
           if(this.state.selectingStartLocation && this.props.onStart)
           {
-            this.addJourneyMarker(location,true);
+            this.addJourneyMarker(location,true,() => this.showSpinner(false));
             this.setState({selectingStartLocation: false});
             //make it specific to start//could have a list marker objects which contain the type of marker
             return this.props.onStart(location);
           }
           else if(!this.state.selectingStartLocation && this.props.onEnd)
           {
-            this.addJourneyMarker(location,false);
+            this.addJourneyMarker(location,false,() => this.showSpinner(false));
             this.setState({selectingStartLocation: true});
             return this.props.onEnd(location);
           }
       })
       .catch(err => {
+        this.showSpinner(false);
         if(err.status == 900)
         {
           console.log("Request count exceeded.");
@@ -264,24 +281,26 @@ class MapContainer extends React.Component {
       lng: location.coordinate.longitude
     }
     let loc = location;
+    this.showSpinner(true);
     this.props.actions.geocodePosition(geoloc)
       .then(res => {
           loc.info = res;
           if(this.state.selectingStartLocation && this.props.onStart)
           {
-            this.addJourneyMarker(loc,true);
+            this.addJourneyMarker(loc,true,() => this.showSpinner(false));
             //make it specific to start//could have a list marker objects which contain the type of marker
             this.props.onStart(loc);
           }
           else if(!this.state.selectingStartLocation && this.props.onEnd)
           {
-            this.addJourneyMarker(loc,false);
+            this.addJourneyMarker(loc,false,() => this.showSpinner(false));
             this.props.onEnd(loc);
           }
           markers = markers.filter(marker => marker.key !== markerKey);
           return this.setState({markers});
       })
       .catch(err => {
+        this.showSpinner(false);
         if(err.status == 900)
         {
           console.log("Request count exceeded.");
@@ -317,7 +336,7 @@ class MapContainer extends React.Component {
       title: apiResponse.formatted_address
     };
     let markers = this.state.markers
-
+    this.showSpinner(true);
     this.props.actions.geocodePosition(coordinate)
       .then(res => {
         newMarker.location.info = res[0];
@@ -330,9 +349,13 @@ class MapContainer extends React.Component {
           newMarker
         ]
         this.setState({markers: markers});
+        this.showSpinner(false);
         return markers;
       })
-      .catch(res => console.log(res));
+      .catch(res => {
+        console.log(res);
+        this.showSpinner(false);
+      });
 
     this.setState({
       region: {
@@ -539,6 +562,11 @@ class MapContainer extends React.Component {
             <Text>Done</Text>
           </TouchableOpacity>*/}
         </View>
+        {this.state.showProgress && <ActivityIndicator
+            animating={this.state.showProgress}
+            size="large"
+            style={styles.loader}
+          />}
       </View>
     );
   }
@@ -605,7 +633,8 @@ var styles = StyleSheet.create({
         fontSize: 24
     },
     loader: {
-        marginTop: 20
+        position: "absolute",
+        top: 400,
     },
     error: {
         color: 'red',
