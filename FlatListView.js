@@ -65,7 +65,7 @@ export default class MyList extends React.PureComponent {
   render() {
     return (
       <FlatList
-        data={Object.values(this.props.alarms)}
+        data={Object.values(this.props.alarms).sort((alarm1,alarm2) => alarm1.time - alarm2.time)}
         extraData={this.state}
         keyExtractor={this._keyExtractor}
         renderItem={this._renderItem}
