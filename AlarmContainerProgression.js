@@ -28,7 +28,7 @@ import {
 class AlarmContainerWizard extends React.Component {
   constructor(props){
     super(props);
-
+    let alarm = this.props.alarm? this.props.alarm : this.getInitialAlarm();
     this.state = {
       showProgress: false,
       mydate: this.props.date,
@@ -38,7 +38,7 @@ class AlarmContainerWizard extends React.Component {
       addingArrivalTime: false,
       showSummary: false,
       alarm1: null,
-      alarm: this.getInitialAlarm(),
+      alarm: alarm,
       currentAlarmId: null,
       ringAlarm: false,
       timeZoneOffsetInHours: this.props.timeZoneOffsetInHours,
@@ -574,9 +574,9 @@ class AlarmContainerWizard extends React.Component {
 
   //make calc journey button readonly unless jounery params are set.
   render(){
-    const alarm = this.props.state[this.state.currentAlarmId];
-      return (
-        <View
+    let alarm = this.props.state[this.state.currentAlarmId||(this.props.alarm&&this.props.alarm.id)];
+      return ( !this.props.existingAlarm?
+        (<View
           style={styles.container}
         >
           {this.state.showAd && (
@@ -651,7 +651,7 @@ class AlarmContainerWizard extends React.Component {
                 </TouchableHighlight>
               </View>
               <View style={styles.switchContainer}>
-                <Text>Switch me off when I leave</Text>
+                <Text style={styles.buttonText}>Auto-Disable</Text>
                 <Switch
                   value={this.state.alarm.offWhenUpToggle}
                   onTintColor="rgba(228, 122, 11, 0.78)"
@@ -704,7 +704,111 @@ class AlarmContainerWizard extends React.Component {
               size="large"
               style={styles.loader}
             />}
-        </View>
+        </View>)
+        :
+        (
+          <View
+            style={styles.container}
+          >
+          {/*!this.state.addingArrivalTime && <TouchableHighlight
+              onPress={this.state.addingAlarm?this.addAlarm:this.startAddingAlarm}
+              style={styles.button}>
+              <Text style={styles.buttonText}>{this.state.addingAlarm?"Set Alarm":"Add Alarm"}</Text>
+          </TouchableHighlight>}
+          {!this.state.addingAlarm && <TouchableHighlight
+              onPress={this.state.addingArrivalTime?this.addArrivalTimeToJourney:this.startAddingJourneyDestTime}
+              style={styles.button}>
+              <Text style={styles.buttonText}>{this.state.addingArrivalTime?"Set Destination Time":"Add Destination Time"}</Text>
+          </TouchableHighlight>}
+          {this.state.addingAlarm && <TouchableHighlight
+              onPress={this.deleteAlarm}
+              style={styles.buttondanger}>
+              <Text style={styles.buttonText}>Delete Alarm</Text>
+          </TouchableHighlight>}
+          {this.state.addingArrivalTime && <TouchableHighlight
+              onPress={this.deleteJourneyTime}
+              style={styles.buttondanger}>
+              <Text style={styles.buttonText}>Delete Destination Time</Text>
+          </TouchableHighlight>*/}
+            <Text style={styles.datePickerHeader}>{this.state.addingAlarm?"Set Alarm": "Set Arrival Time"}</Text>
+            {(this.state.addingAlarm || this.state.addingArrivalTime) &&
+              <DatePickerIOS
+                date={this.state.datePickerDate}
+                mode={this.state.dateMode}
+                timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
+                onDateChange={this.onDateChange}
+                style={styles.datePicker}
+              />
+            }
+            <TouchableHighlight
+                onPress={this.addJourney}
+                style={styles.button}>
+                <Text style={styles.buttonText}>Select Journey</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+                onPress={this.state.addingAlarm?()=> this.setState({addingAlarm: false, addingArrivalTime: true}):()=> this.setState({addingAlarm: true, addingArrivalTime: false})}
+                style={styles.button}>
+                <Text style={styles.buttonText}>{this.state.addingAlarm? "Edit Arrival Time": "Edit Alarm"}</Text>
+            </TouchableHighlight>
+            {/*<TouchableHighlight
+                onPress={this.calculateJourneyTime}
+                style={styles.button}>
+                <Text style={styles.buttonText}>Recalculate Journey</Text>
+            </TouchableHighlight>*/}
+            <View style={styles.rowOfButtons}>
+              <TouchableHighlight
+                onPress={() => this.changeJourneyType("car")}
+                style={alarm.journeyType==="car"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                <Text style={styles.buttonText}>C</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => this.changeJourneyType("walk")}
+                style={alarm.journeyType==="walk"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                <Text style={styles.buttonText}>W</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => this.changeJourneyType("cycle")}
+                style={alarm.journeyType==="cycle"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                <Text style={styles.buttonText}>C</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => this.changeJourneyType("transit")}
+                style={alarm.journeyType==="transit"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
+                <Text style={styles.buttonText}>T</Text>
+              </TouchableHighlight>
+            </View>
+            <View style={styles.switchContainer}>
+              <Text style={styles.buttonText}>Auto-Disable</Text>
+              <Switch
+                value={this.state.alarm.offWhenUpToggle}
+                onTintColor="rgba(228, 122, 11, 0.78)"
+                onValueChange={(value) => this.toggleChange(value)}
+              />
+            </View>
+            <View style={styles.switchContainer}>
+              <Text style={styles.buttonText}>Auto-Disable</Text>
+              <Switch
+                value={this.state.alarm.offWhenUpToggle}
+                onTintColor="rgba(228, 122, 11, 0.78)"
+                onValueChange={(value) => this.toggleChange(value)}
+              />
+            </View>
+            {/*<Text style={styles.error}>Alarm @: {alarm? alarm.time.toLocaleString(): "not set yet"}.</Text>
+            <Text style={styles.error}>Destination arrival @: {alarm && alarm.journey && alarm.journey.journeyTime? alarm.journey.journeyTime.toLocaleString(): "not set yet"}.</Text>*/}
+            {/*<Text style={styles.success}>Expected Journey Length Now: {alarm && alarm.journey && alarm.journey.expectedJourneyLength? alarm.journey.expectedJourneyLength.toString(): "N/A"} minutes</Text>*/}
+
+            {/*this.state.alarm.time && <TouchableHighlight
+                onPress={() => this.props.navigator.pop()}
+                style={styles.buttonSuccess}>
+                <Text style={styles.buttonText}>Done</Text>
+            </TouchableHighlight>*/}
+            {this.state.showProgress && <ActivityIndicator
+                animating={this.state.showProgress}
+                size="large"
+                style={styles.loader}
+                />}
+          </View>
+        )
       );
   }
 }
@@ -738,25 +842,34 @@ let styles = StyleSheet.create({
         flex: 1
     },
     switchContainer: {
-      flex: 1,
+      flex: 0,
       flexDirection: "row",
+      marginTop: 30,
       padding: 10,
       justifyContent: "space-between"
     },
     addContainer: {
       marginTop: -40
     },
+    datePickerHeader: {
+      color: "rgba(228, 122, 11, 0.78)",
+      fontSize: 26,
+      fontWeight: "bold",
+      marginTop:0
+    },
     rowOfButtons: {
-      flex: 1,
+      flex: 0,
       flexDirection: "row",
+      marginTop: 20,
       padding: 10,
+      height: 100,
       justifyContent: "space-between"
     },
     journeyTypeButtonSelected: {
       backgroundColor: '#48ec80',
       borderColor: '#020608',
       borderRadius: 5,
-      marginTop: 30,
+      marginTop: 10,
       marginBottom: 10,
       padding: 5,
       justifyContent: 'center',
@@ -769,7 +882,7 @@ let styles = StyleSheet.create({
       backgroundColor: '#48BBEC',
       borderColor: '#48BBEC',
       borderRadius: 5,
-      marginTop: 30,
+      marginTop: 10,
       marginBottom: 10,
       padding: 5,
       justifyContent: 'center',
@@ -808,7 +921,7 @@ let styles = StyleSheet.create({
       backgroundColor: "rgba(52, 48, 70, 0)",
       height: 225,
       width: 500,
-      marginTop: 10,
+      marginTop: 0,
       marginBottom: 10,
       paddingBottom: 40
     },

@@ -14,7 +14,8 @@ import {
 } from 'react-native';
 import FlatListView from './FlatListView';
 import AlarmActions from './Actions/alarmActions';
-import AlarmContainer from './AlarmContainer2';
+// import AlarmContainer from './AlarmContainer2';
+import AlarmContainer from './AlarmContainerProgression';
 import {getAuthInfo} from './AuthService';
 
 let moment = require('moment');
@@ -231,8 +232,11 @@ class FlatAlarmList extends React.Component {
       this.props.navigator.push({
           title: `${rowData.time && `${rowData.time.getHours()}:${rowData.time.getMinutes()}`} Alarm Detail`,
           component: AlarmContainer,
+          rightButtonTitle: 'Done',
+          onRightButtonPress: () => this.props.navigator.pop(),
           passProps: {
-              alarm: rowData
+              alarm: rowData,
+              existingAlarm: true
           }
       });
     }
