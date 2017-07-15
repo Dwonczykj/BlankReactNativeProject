@@ -10,6 +10,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native';
+import FontAwesome, { Icons } from 'react-native-fontawesome';
 import AlarmActions from './Actions/alarmActions';
 import Heading from './Common/Header';
 import MapContainer from './mapContainer';
@@ -621,7 +622,9 @@ class AlarmContainerWizard extends React.Component {
               <TouchableHighlight
                 onPress={this.showSummary}
                 style={styles.button}>
-                <Text style={styles.buttonText}>Show Summary</Text>
+                <Text style={styles.fontAwesomeIconLarge}>
+                  <FontAwesome>{Icons.check}</FontAwesome>
+                </Text>
               </TouchableHighlight>
               {/*<TouchableHighlight
                   onPress={this.deleteJourneyTime}
@@ -632,22 +635,30 @@ class AlarmContainerWizard extends React.Component {
                 <TouchableHighlight
                   onPress={() => this.changeJourneyType("car")}
                   style={alarm.journeyType==="car"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                  <Text style={styles.buttonText}>C</Text>
+                  <Text style={styles.fontAwesomeIcon}>
+                    <FontAwesome>{Icons.car}</FontAwesome>
+                  </Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                   onPress={() => this.changeJourneyType("walk")}
                   style={alarm.journeyType==="walk"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                  <Text style={styles.buttonText}>W</Text>
+                  <Text style={styles.fontAwesomeIcon}>
+                    <FontAwesome>{Icons.male}</FontAwesome>
+                  </Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                   onPress={() => this.changeJourneyType("cycle")}
                   style={alarm.journeyType==="cycle"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                  <Text style={styles.buttonText}>C</Text>
+                  <Text style={styles.fontAwesomeIcon}>
+                    <FontAwesome>{Icons.bicycle}</FontAwesome>
+                  </Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                   onPress={() => this.changeJourneyType("transit")}
                   style={alarm.journeyType==="transit"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                  <Text style={styles.buttonText}>T</Text>
+                  <Text style={styles.fontAwesomeIcon}>
+                    <FontAwesome>{Icons.subway}</FontAwesome>
+                  </Text>
                 </TouchableHighlight>
               </View>
               <View style={styles.switchContainer}>
@@ -759,31 +770,31 @@ class AlarmContainerWizard extends React.Component {
               <TouchableHighlight
                 onPress={() => this.changeJourneyType("car")}
                 style={alarm.journeyType==="car"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                <Text style={styles.buttonText}>C</Text>
+                <Text style={styles.fontAwesomeIcon}>
+                  <FontAwesome>{Icons.car}</FontAwesome>
+                </Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.changeJourneyType("walk")}
                 style={alarm.journeyType==="walk"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                <Text style={styles.buttonText}>W</Text>
+                <Text style={styles.fontAwesomeIcon}>
+                  <FontAwesome>{Icons.male}</FontAwesome>
+                </Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.changeJourneyType("cycle")}
                 style={alarm.journeyType==="cycle"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                <Text style={styles.buttonText}>C</Text>
+                <Text style={styles.fontAwesomeIcon}>
+                  <FontAwesome>{Icons.bicycle}</FontAwesome>
+                </Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.changeJourneyType("transit")}
                 style={alarm.journeyType==="transit"?styles.journeyTypeButtonSelected:styles.journeyTypeButton}>
-                <Text style={styles.buttonText}>T</Text>
+                <Text style={styles.fontAwesomeIcon}>
+                  <FontAwesome>{Icons.subway}</FontAwesome>
+                </Text>
               </TouchableHighlight>
-            </View>
-            <View style={styles.switchContainer}>
-              <Text style={styles.buttonText}>Auto-Disable</Text>
-              <Switch
-                value={this.state.alarm.offWhenUpToggle}
-                onTintColor="rgba(228, 122, 11, 0.78)"
-                onValueChange={(value) => this.toggleChange(value)}
-              />
             </View>
             <View style={styles.switchContainer}>
               <Text style={styles.buttonText}>Auto-Disable</Text>
@@ -884,12 +895,24 @@ let styles = StyleSheet.create({
       borderRadius: 5,
       marginTop: 10,
       marginBottom: 10,
-      padding: 5,
+      padding: 0,
       justifyContent: 'center',
       alignItems: 'center',
       height: 50,
       minWidth: 50,
       maxWidth: 50
+    },
+    fontAwesomeIcon: {
+      margin: 10,
+      fontSize: 18,
+      color: '#fff',
+      textAlign: 'left'
+    },
+    fontAwesomeIconLarge: {
+      margin: 10,
+      fontSize: 25,
+      color: '#fff',
+      textAlign: 'left'
     },
     switch: {
 

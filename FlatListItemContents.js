@@ -44,40 +44,31 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
               justifyContent: "space-between",
 
           }}>
-              <Text style={{
-                  fontWeight: '600',
-                  fontSize: 32,
-                  color: "rgba(228, 122, 11, 0.78)"
-              }}>
-                  {alarm.time && `${displayClockSectionAs12HourTime(alarm.time.getHours())}:${displayClockSectionAs12HourTime(alarm.time.getMinutes())}`}
-              </Text>
-              <View>
-                <Text style={{
-                    fontWeight: '300',
-                    fontSize: 11,
-                    color: "rgba(247, 198, 146, 0.86)"
-                }}>
-                    <Text style={{
-                        fontWeight: '300',
-                        fontSize: 10,
-                        color: "rgba(228, 122, 11, 0.78)"
-                    }}>{alarm.journey &&
-                      alarm.journey.destination &&
-                      alarm.journey.destination.info[0].feature
-                     }</Text>
-
+              <View style={styles.AlarmDetailContainer}>
+                <Text style={styles.AlarmTimeTime}>
+                    {alarm.time && `${displayClockSectionAs12HourTime(alarm.time.getHours())}:${displayClockSectionAs12HourTime(alarm.time.getMinutes())}`}
+                    <Text style={{fontSize: 15, fontWeight: '300'}}>{alarm.time.getHours()>11&&alarm.time.getHours()<24?"pm":"am"}</Text>
                 </Text>
-                <Text style={{
-                    fontWeight: '600',
-                    fontSize: 18,
-                    color: "rgba(204, 3, 33, 0.78)"
-                }}>
+                <Text style={styles.AlarmDetailElement}>
+                  {alarm.time && `${alarm.time.getDate()}/${alarm.time.getMonth()}/${alarm.time.getFullYear()}`}
+                </Text>
+              </View>
+              <View style={styles.AlarmDetailContainer}>
+                <Text style={styles.AlarmDetailElement}>
+                  {alarm.journey &&
+                    alarm.journey.destination &&
+                    alarm.journey.destination.info[0].feature}
+                </Text>
+                <Text style={styles.AlarmDetailElementDanger}>
                   {
                       /*alarm.payload.ref.replace('refs/heads/', '')*/
                       alarm.journey &&
                       alarm.journey.expectedJourneyLength &&
                       `${parseInt(alarm.journey.expectedJourneyLength).toString()} mins`
                   }
+                </Text>
+                <Text style={styles.AlarmDetailElement}>
+                  {alarm.journeyType}
                 </Text>
               </View>
               <Switch
@@ -91,5 +82,30 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
     </TouchableHighlight>
   );
 }
+
+let styles = StyleSheet.create({
+  AlarmDetailContainer: {
+    flex: 0,
+    alignItems: "center"
+  },
+  AlarmDetailElement: {
+    fontWeight: '300',
+    fontSize: 15,
+    color: "rgba(228, 122, 11, 0.78)"
+  },
+  AlarmDetailElementDanger: {
+    fontWeight: '600',
+    fontSize: 18,
+    color: "rgba(204, 63, 33, 0.78)"
+  },
+  AlarmTimeTime: {
+    fontWeight: '600',
+    fontSize: 32,
+    color: "rgba(228, 122, 11, 0.78)"
+  },
+  AlarmTimeDate: {
+
+  }
+});
 
 export default item;
