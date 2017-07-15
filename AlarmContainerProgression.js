@@ -103,6 +103,15 @@ class AlarmContainerWizard extends React.Component {
   //   },1000)
   // }
   componentDidMount() {
+    setTimeout(
+      () => {
+        setInterval(
+          () => this.showAdBanner(true),
+          45000
+        );
+      },
+      3000
+    );
     this.timerID = setInterval(
       () => this.tick(),
       1000
@@ -581,7 +590,7 @@ class AlarmContainerWizard extends React.Component {
           style={styles.container}
         >
           {this.state.showAd && (
-            <View style={styles.addContainer}>
+            <View style={styles.adContainer}>
               <AdMobBanner
               bannerSize="fullBanner"
               adUnitID="ca-app-pub-3940256099942544/1033173712"
@@ -619,13 +628,13 @@ class AlarmContainerWizard extends React.Component {
             </View>}
           {this.state.addingArrivalTime &&
             <View>
-              <TouchableHighlight
+              {/*<TouchableHighlight
                 onPress={this.showSummary}
                 style={styles.button}>
                 <Text style={styles.fontAwesomeIconLarge}>
                   <FontAwesome>{Icons.check}</FontAwesome>
                 </Text>
-              </TouchableHighlight>
+              </TouchableHighlight>*/}
               {/*<TouchableHighlight
                   onPress={this.deleteJourneyTime}
                   style={styles.buttondanger}>
@@ -702,11 +711,11 @@ class AlarmContainerWizard extends React.Component {
                     style={styles.buttonSuccess}>
                     <Text style={styles.buttonText}>Done</Text>
                 </TouchableHighlight>}
-                <TouchableHighlight  style={styles.button}>
+                {/*<TouchableHighlight  style={styles.button}>
                   <Text onPress={() => this.showAdBanner(true)} style={styles.buttonText}>
                     Show Add
                   </Text>
-                </TouchableHighlight>
+                </TouchableHighlight>*/}
               </View>
             )
           }
@@ -859,7 +868,7 @@ let styles = StyleSheet.create({
       padding: 10,
       justifyContent: "space-between"
     },
-    addContainer: {
+    adContainer: {
       marginTop: -40
     },
     datePickerHeader: {

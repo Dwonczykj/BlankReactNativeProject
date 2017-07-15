@@ -57,7 +57,8 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
                 <Text style={styles.AlarmDetailElement}>
                   {alarm.journey &&
                     alarm.journey.destination &&
-                    alarm.journey.destination.info[0].feature}
+                    alarm.journey.destination.info[0].feature &&
+                    (alarm.journey.destination.info[0].feature.length > 20? `${alarm.journey.destination.info[0].feature.substr(0,20)}...`:alarm.journey.destination.info[0].feature) }
                 </Text>
                 <Text style={styles.AlarmDetailElementDanger}>
                   {

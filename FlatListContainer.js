@@ -12,6 +12,12 @@ import {
   Switch,
   TouchableHighlight
 } from 'react-native';
+import {
+  AdMobBanner,
+  AdMobInterstitial,
+  PublisherBanner,
+  AdMobRewarded
+} from 'react-native-admob';
 import FlatListView from './FlatListView';
 import AlarmActions from './Actions/alarmActions';
 // import AlarmContainer from './AlarmContainer2';
@@ -56,13 +62,15 @@ class FlatAlarmList extends React.Component {
             alarmSound: whoosh,
             ringingArray: [],
             // alreadyRinging: false,
-            showProgress: false
+            showProgress: false,
+            showAd: false
         };
 
         this.soundTheAlarm = this.soundTheAlarm.bind(this);
         this.pressRow = this.pressRow.bind(this);
         this.displayClockSectionAs12HourTime = this.displayClockSectionAs12HourTime.bind(this);
         this.toggleChange = this.toggleChange.bind(this);
+        this.showAdBanner = this.showAdBanner.bind(this);
     }
 
     // get alarmSound() {
@@ -74,6 +82,16 @@ class FlatAlarmList extends React.Component {
         this.timerID = setInterval(
           () => this.checkAlarms(),
           1000
+        );
+        setTimeout(
+          () => {
+            this.showAdBanner(true);
+            setInterval(
+              () => this.showAdBanner(true),
+              60000
+            );
+          },
+          3000
         );
     }
 
@@ -146,6 +164,14 @@ class FlatAlarmList extends React.Component {
           console.log('playback failed due to audio decoding errors');
         }
       });
+    }
+
+    showAdBanner(showAd){
+      this.setState({showAd: showAd});
+      setTimeout(
+        () => this.setState({showAd: false}),
+        5000
+      );
     }
 
     displayClockSectionAs12HourTime(section){
@@ -269,6 +295,16 @@ class FlatAlarmList extends React.Component {
             justifyContent: 'flex-start',
             backgroundColor: "rgba(52, 48, 70, 0.92)"
         }}>
+          {this.state.showAd && (
+            <View style={styles.adContainer}>
+              <AdMobBanner
+              bannerSize="fullBanner"
+              adUnitID="ca-app-pub-3940256099942544/1033173712"
+              testDeviceID="EMULATOR"
+              didFailToReceiveAdWithError={(error) => console.log(error)}
+              />
+            </View>
+          )}
             <FlatListView
               alarms={this.props.alarms}
               displayClockSectionAs12HourTime={this.displayClockSectionAs12HourTime}
@@ -293,6 +329,9 @@ let styles = StyleSheet.create({
     backgroundColor: '#eeeeee',
     padding: 10,
   },
+  adContainer: {
+    marginTop: 65
+  }
 });
 
 const mapStateToProps = (store) =>

@@ -215,10 +215,10 @@ class MapContainer extends React.Component {
       });
   }
 
-  onPress(event){
+  onLongPress(event){
     if(this.props.onPress)
     {
-      return this.props.onPress(event.nativeEvent.coordinate);
+      return this.props.onPress(event.nativeEvent.coordinate + "long press");
     }
   }
 
@@ -226,7 +226,7 @@ class MapContainer extends React.Component {
     this.setState({showProgress: show});
   }
 
-  onLongPress(event){
+  onPress(event){
     this.showSpinner(true);
     const geoloc = {
       lat: event.nativeEvent.coordinate.latitude,
