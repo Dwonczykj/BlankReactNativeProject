@@ -10,8 +10,28 @@ import {
   Switch,
   TouchableHighlight
 } from 'react-native';
+import FontAwesome, { Icons } from 'react-native-fontawesome';
 
 const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime, toggleAlarm}) => {
+  let getIconFromJourney = (journeyType) => {
+    switch (journeyType) {
+      case "transit":
+        return "subway";
+
+      case "cycle":
+        return "bicycle";
+
+      case "walk":
+        return "male";
+
+      case "car":
+        return "car";
+
+      default:
+        return "subway";
+    }
+  }
+
   return (
     <TouchableHighlight
         onPress={()=> onPressItem()}
@@ -68,9 +88,19 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
                       `${parseInt(alarm.journey.expectedJourneyLength).toString()} mins`
                   }
                 </Text>
-                <Text style={styles.AlarmDetailElement}>
-                  {alarm.journeyType}
-                </Text>
+                {/*<Text style={styles.AlarmDetailElement}>
+                  {alarm.journey &&
+                    alarm.journey.destination &&
+                    alarm.journey.destination.info[0].feature &&
+                    alarm.journeyType}
+                </Text>*/}
+                {alarm.journey &&
+                  alarm.journey.destination &&
+                  alarm.journey.destination.info[0].feature && (
+                    <Text style={styles.fontAwesomeIcon}>
+                      <FontAwesome>{Icons[getIconFromJourney(alarm.journeyType)]}</FontAwesome>
+                    </Text>
+                  )}
               </View>
               <Switch
                 value={alarm.enabled?true:false}
@@ -104,8 +134,11 @@ let styles = StyleSheet.create({
     fontSize: 32,
     color: "rgba(228, 122, 11, 0.78)"
   },
-  AlarmTimeDate: {
-
+  fontAwesomeIcon: {
+    margin: 3,
+    fontSize: 18,
+    color: 'rgba(228, 122, 11, 0.78)',
+    textAlign: 'left'
   }
 });
 

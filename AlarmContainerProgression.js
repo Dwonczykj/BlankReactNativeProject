@@ -105,7 +105,7 @@ class AlarmContainerWizard extends React.Component {
   componentDidMount() {
     setTimeout(
       () => {
-        setInterval(
+        this.adTimer = setInterval(
           () => this.showAdBanner(true),
           45000
         );
@@ -148,6 +148,7 @@ class AlarmContainerWizard extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+    clearInterval(this.adTimer);
     AdMobRewarded.removeAllListeners();
   }
 
@@ -589,16 +590,6 @@ class AlarmContainerWizard extends React.Component {
         (<View
           style={styles.container}
         >
-          {this.state.showAd && (
-            <View style={styles.adContainer}>
-              <AdMobBanner
-              bannerSize="fullBanner"
-              adUnitID="ca-app-pub-3940256099942544/1033173712"
-              testDeviceID="EMULATOR"
-              didFailToReceiveAdWithError={(error) => console.log(error)}
-              />
-            </View>
-          )}
           {(this.state.addingAlarm || this.state.addingArrivalTime) && (
             <DatePickerIOS
               date={this.state.datePickerDate}
@@ -719,6 +710,16 @@ class AlarmContainerWizard extends React.Component {
               </View>
             )
           }
+          {this.state.showAd && (
+            <View style={styles.adContainer}>
+              <AdMobBanner
+              bannerSize="smartBannerPortrait"
+              adUnitID="ca-app-pub-3940256099942544/1033173712"
+              testDeviceID="EMULATOR"
+              didFailToReceiveAdWithError={(error) => console.log(error)}
+              />
+            </View>
+          )}
           {this.state.showProgress && <ActivityIndicator
               animating={this.state.showProgress}
               size="large"
@@ -822,6 +823,16 @@ class AlarmContainerWizard extends React.Component {
                 style={styles.buttonSuccess}>
                 <Text style={styles.buttonText}>Done</Text>
             </TouchableHighlight>*/}
+            {this.state.showAd && (
+              <View style={styles.adContainer}>
+                <AdMobBanner
+                bannerSize="smartBannerPortrait"
+                adUnitID="ca-app-pub-3940256099942544/1033173712"
+                testDeviceID="EMULATOR"
+                didFailToReceiveAdWithError={(error) => console.log(error)}
+                />
+              </View>
+            )}
             {this.state.showProgress && <ActivityIndicator
                 animating={this.state.showProgress}
                 size="large"
@@ -869,7 +880,7 @@ let styles = StyleSheet.create({
       justifyContent: "space-between"
     },
     adContainer: {
-      marginTop: -40
+      marginTop: 0
     },
     datePickerHeader: {
       color: "rgba(228, 122, 11, 0.78)",

@@ -86,7 +86,7 @@ class FlatAlarmList extends React.Component {
         setTimeout(
           () => {
             this.showAdBanner(true);
-            setInterval(
+            this.adTimer = setInterval(
               () => this.showAdBanner(true),
               60000
             );
@@ -109,6 +109,7 @@ class FlatAlarmList extends React.Component {
 
     componentWillUnmount() {
       clearInterval(this.timerID);
+      clearInterval(this.adTimer);
       let soundResource = this.state.alarmSound;
       soundResource.release();
     }
@@ -295,16 +296,6 @@ class FlatAlarmList extends React.Component {
             justifyContent: 'flex-start',
             backgroundColor: "rgba(52, 48, 70, 0.92)"
         }}>
-          {this.state.showAd && (
-            <View style={styles.adContainer}>
-              <AdMobBanner
-              bannerSize="fullBanner"
-              adUnitID="ca-app-pub-3940256099942544/1033173712"
-              testDeviceID="EMULATOR"
-              didFailToReceiveAdWithError={(error) => console.log(error)}
-              />
-            </View>
-          )}
             <FlatListView
               alarms={this.props.alarms}
               displayClockSectionAs12HourTime={this.displayClockSectionAs12HourTime}
@@ -315,6 +306,16 @@ class FlatAlarmList extends React.Component {
               &&
               this.soundTheAlarm()
             }
+            {this.state.showAd && (
+              <View style={styles.adContainer}>
+                <AdMobBanner
+                bannerSize="smartBannerPortrait"
+                adUnitID="ca-app-pub-3940256099942544/1033173712"
+                testDeviceID="EMULATOR"
+                didFailToReceiveAdWithError={(error) => console.log(error)}
+                />
+              </View>
+            )}
         </View>
       );
     }
@@ -330,7 +331,7 @@ let styles = StyleSheet.create({
     padding: 10,
   },
   adContainer: {
-    marginTop: 65
+    marginTop: 0
   }
 });
 
