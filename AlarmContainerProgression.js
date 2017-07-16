@@ -754,7 +754,7 @@ class AlarmContainerWizard extends React.Component {
             <Text style={styles.datePickerHeader}>{this.state.addingAlarm?"Set Alarm": "Set Arrival Time"}</Text>
             {(this.state.addingAlarm || this.state.addingArrivalTime) &&
               <DatePickerIOS
-                date={this.state.datePickerDate}
+                date={alarm.time?alarm.time:this.state.datePickerDate}
                 mode={this.state.dateMode}
                 timeZoneOffsetInMinutes={this.state.timeZoneOffsetInHours * 60}
                 onDateChange={this.onDateChange}
