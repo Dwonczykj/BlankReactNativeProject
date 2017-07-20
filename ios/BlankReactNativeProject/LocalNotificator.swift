@@ -18,13 +18,13 @@ class LocalNotificator: NSObject {
       return;
     }
     
-    let app: UIApplication = RCTSharedApplication()
-    let types: UIUserNotificationType = [.Badge, .Alert, .Sound]
+    let app: UIApplication = RCTSharedApplication()!
+    let types: UIUserNotificationType = [.badge, .alert, .sound]
     
     let category = UIMutableUserNotificationCategory()
     category.identifier = "SwiftReactNativeCategory"
     
-    let settings = UIUserNotificationSettings( forTypes: types, categories: [category] )
+    let settings = UIUserNotificationSettings(types: types, categories: [category])
     
     app.registerUserNotificationSettings(settings)
     app.registerForRemoteNotifications()
@@ -39,13 +39,13 @@ class LocalNotificator: NSObject {
     }
     
     var types: UIUserNotificationType;
-    if (UIApplication.instancesRespondToSelector(Selector("currentUserNotificationSettings"))) {
-      if let settings = RCTSharedApplication().currentUserNotificationSettings() {
+    if (UIApplication.instancesRespond(to: #selector(getter: UIApplication.currentUserNotificationSettings))) {
+      if let settings = RCTSharedApplication()?.currentUserNotificationSettings {
         types = settings.types
         var permissions = [String: Bool]()
-        permissions["alert"] = types.contains(.Alert)
-        permissions["badge"] = types.contains(.Badge)
-        permissions["sound"] = types.contains(.Sound)
+        permissions["alert"] = types.contains(.alert)
+        permissions["badge"] = types.contains(.badge)
+        permissions["sound"] = types.contains(.sound)
         
         callback([permissions]);
         return;
@@ -56,8 +56,8 @@ class LocalNotificator: NSObject {
   }
   
   @objc func scheduleLocalNotification(notificationData: [String: AnyObject], callback: RCTResponseSenderBlock) -> Void {
-    let notification = createLocalNotification(notificationData)
-    RCTSharedApplication().scheduleLocalNotification(notification)
+    let notification = createLocalNotification(notificationData: notificationData)
+    RCTSharedApplication()?.scheduleLocalNotification(notification)
     callback([NotificationToDictionaryTransformer(notification: notification).transform()]);
     return;
   }
@@ -76,10 +76,10 @@ class LocalNotificator: NSObject {
     notification.category = "schedulerViewItemCategory"
     
     if let fireDate = notificationData["fireDate"] {
-      notification.fireDate = RCTConvert.NSDate(fireDate)
+      notification.fireDate = RCTConvert.nsDate(fireDate)
     }
     
-    let uuid = NSUUID().UUIDString
+    let uuid = NSUUID().uuidString
     
     if let userInfo = notificationData["userInfo"] as? [NSObject : AnyObject]{
       notification.userInfo = userInfo
@@ -92,7 +92,7 @@ class LocalNotificator: NSObject {
   }
   
   @objc func cancelLocalNotification(uuid: String) -> Void {
-    for notification in RCTSharedApplication().scheduledLocalNotifications! as [UILocalNotification] {
+    for notification in (RCTSharedApplication()?.scheduledLocalNotifications)! {
       
       guard (notification.userInfo != nil) else {
         continue
@@ -101,7 +101,7 @@ class LocalNotificator: NSObject {
       guard notification.userInfo!["UUID"] as! String == uuid else {
         continue
       }
-      RCTSharedApplication().cancelLocalNotification(notification)
+      RCTSharedApplication()?.cancelLocalNotification(notification)
       break
     }
   }

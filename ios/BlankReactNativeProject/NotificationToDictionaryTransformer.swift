@@ -17,30 +17,30 @@ class NotificationToDictionaryTransformer {
   
   func transform() -> [String: AnyObject] {
     var data = [String: AnyObject]()
-    data["hasAction"] = notification.hasAction
+    data["hasAction"] = notification.hasAction as AnyObject
     
     if let alertBody = notification.alertBody {
-      data["alertBody"] = alertBody
+      data["alertBody"] = alertBody as AnyObject
     }
     
     if let fireDate = notification.fireDate {
-      data["fireDate"] = fireDate.timeIntervalSince1970
+      data["fireDate"] = fireDate.timeIntervalSince1970 as AnyObject
     }
     
     if let userInfo = notification.userInfo {
-      data["userInfo"] = userInfo
+      data["userInfo"] = userInfo as AnyObject
     }
     
     if let alertAction = notification.alertAction {
-      data["alertAction"] = alertAction
+      data["alertAction"] = alertAction as AnyObject
     }
     
     if let alertTitle = notification.alertTitle {
-      data["alertTitle"] = alertTitle
+      data["alertTitle"] = alertTitle as AnyObject
     }
     
     if let alertTitle = notification.alertTitle {
-      data["alertTitle"] = alertTitle
+      data["alertTitle"] = alertTitle as AnyObject
     }
     
     return data

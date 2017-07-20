@@ -47,6 +47,8 @@
 		C48569C3599045E89010FDCE /* libKCKeepAwake.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A0B89FB6724B8B89198BDE /* libKCKeepAwake.a */; };
 		CB8082908EB1CF0F1A9A3BEE /* libPods-BlankReactNativeProjectTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CDAC063810F76B5E0E00059 /* libPods-BlankReactNativeProjectTests.a */; };
 		D2556D5E33694BE7BDBD77B6 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 760F0D2C42E14D0A8FA0EF03 /* FontAwesome.ttf */; };
+		D428CD881F214D0C00E69A45 /* JSEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */; };
+		D428CDA91F2155D800E69A45 /* JSEventEmitterBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */; };
 		D44F37121F209EA400F065EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37111F209EA400F065EE /* AppDelegate.swift */; };
 		D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */; };
 		D44F37351F20A46E00F065EE /* LocalNotificator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37341F20A46E00F065EE /* LocalNotificator.swift */; };
@@ -346,6 +348,8 @@
 		B949BA43FAC74F3E8AA2B89F /* libAirMaps.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libAirMaps.a; sourceTree = "<group>"; };
 		C6D14A9F08D04962B481E671 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		C957EE7E488A439A901B6123 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
+		D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSEventEmitter.swift; sourceTree = "<group>"; };
+		D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSEventEmitterBridge.m; sourceTree = "<group>"; };
 		D44F37101F209EA400F065EE /* BlankReactNativeProject-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BlankReactNativeProject-Bridging-Header.h"; sourceTree = "<group>"; };
 		D44F37111F209EA400F065EE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = BlankReactNativeProject/AppDelegate.swift; sourceTree = "<group>"; };
 		D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationToDictionaryTransformer.swift; path = BlankReactNativeProject/NotificationToDictionaryTransformer.swift; sourceTree = "<group>"; };
@@ -513,6 +517,8 @@
 				D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */,
 				D44F37341F20A46E00F065EE /* LocalNotificator.swift */,
 				D44F37361F20A4F000F065EE /* LocalNotificatorBridge.m */,
+				D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */,
+				D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */,
 			);
 			name = BlankReactNativeProject;
 			sourceTree = "<group>";
@@ -794,7 +800,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 610;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = Facebook;
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -1403,10 +1409,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				D44F37121F209EA400F065EE /* AppDelegate.swift in Sources */,
+				D428CD881F214D0C00E69A45 /* JSEventEmitter.swift in Sources */,
 				D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */,
 				D44F37371F20A4F000F065EE /* LocalNotificatorBridge.m in Sources */,
 				D44F37351F20A46E00F065EE /* LocalNotificator.swift in Sources */,
 				D47D24691E99A8AA0010F76E /* Encoding.m in Sources */,
+				D428CDA91F2155D800E69A45 /* JSEventEmitterBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1488,6 +1496,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlankReactNativeProject.app/BlankReactNativeProject";
 			};
@@ -1525,6 +1534,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BlankReactNativeProject.app/BlankReactNativeProject";
 			};
@@ -1554,6 +1564,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BlankReactNativeProject;
 				SWIFT_OBJC_BRIDGING_HEADER = "BlankReactNativeProject-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1585,6 +1596,7 @@
 					"-ObjC",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = BlankReactNativeProject;
 				SWIFT_OBJC_BRIDGING_HEADER = "BlankReactNativeProject-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -1753,15 +1765,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1794,8 +1810,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1803,6 +1821,7 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1812,6 +1831,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

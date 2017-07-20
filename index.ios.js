@@ -6,9 +6,13 @@
 
 import React, { Component } from 'react';
 import {
+  AlertIOS,
   AppRegistry,
+  NativeModules,
+  NativeEventEmitter,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
   ActivityIndicator
 } from 'react-native';
@@ -22,7 +26,8 @@ export default class BlankReactNativeProject extends Component {
     super(props);
     this.state = {
       checkingAuth: true,
-      isLoggedIn: false
+      isLoggedIn: false,
+      lastNotification: null
     }
     this.onLogin = this.onLogin.bind(this);
   }
@@ -35,14 +40,55 @@ export default class BlankReactNativeProject extends Component {
       })
     });
 
-    this.didReceiveLocalNotification = (notification) => {
-        AlertIOS.alert(notification.userInfo.message);
-        this.setState({lastNotification: null});
-    };
 
-    NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);
+    // this.didReceiveLocalNotification = (notification) => {
+    //     AlertIOS.alert(notification.userInfo.message);
+    //     this.setState({lastNotification: null});
+    // };
+    //
+    // const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
+    // myModuleEvnt.addListener('sayHello', (data) => console.log(data));
+    // myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
+
+    // React.NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);
   }
 
+  // generateNotification() {
+  // 	let date = new Date;
+  // 	NativeModules.LocalNotificator.scheduleLocalNotification({
+  //         alertBody: 'The body',
+  //         fireDate: date.getTime() + 1000 * 10,
+  //         alertAction: 'View',
+  //         alertTitle: 'The title',
+  //         userInfo: {
+  //             UUID: this.lastNotification,
+  //             message: 'Created at: ' + date.toString()
+  //         }
+  //     }, (notificationData) => {
+  //         this.setState({lastNotification: notificationData});
+  //     });
+  // }
+  //
+  // cancelNotification() {
+  //     NativeModules.LocalNotificator.cancelLocalNotification(this.state.lastNotification.userInfo.UUID);
+  //     this.setState({lastNotification: null});
+  // }
+  //
+  // getCancelNotificationButton() {
+  // 	return (
+  // 		<TouchableOpacity onPress={() => this.cancelNotification()} style={[styles.button, styles.errorButton]}>
+  // 		<Text>Cancel Notification</Text>
+  // 		</TouchableOpacity>
+  // 	);
+  // }
+  //
+  // getGenerateNotificationButton() {
+  // 	return (
+  // 		<TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
+  // 		<Text>Generate New Notification</Text>
+  // 		</TouchableOpacity>
+  // 	);
+  // }
 
   onLogin(){
     this.setState({isLoggedIn: true});
@@ -106,5 +152,8 @@ const styles = StyleSheet.create({
   loader: {
   }
 });
+
+// request permissions
+// NativeModules.LocalNotificator.requestPermissions();
 
 AppRegistry.registerComponent('BlankReactNativeProject', () => BlankReactNativeProject);
