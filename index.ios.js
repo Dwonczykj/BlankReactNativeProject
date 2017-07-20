@@ -34,7 +34,15 @@ export default class BlankReactNativeProject extends Component {
         isLoggedIn: authInfo != null
       })
     });
+
+    this.didReceiveLocalNotification = (notification) => {
+        AlertIOS.alert(notification.userInfo.message);
+        this.setState({lastNotification: null});
+    };
+
+    NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);
   }
+
 
   onLogin(){
     this.setState({isLoggedIn: true});
