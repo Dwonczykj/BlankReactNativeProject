@@ -72,6 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
     print(notification)
     //RCTSharedApplication()?.cancelLocalNotification(notification)
     
+    
 //    let jsEventEmitter = JSEventEmitter()
 //    
 //    jsEventEmitter.tellJS(application: application, eventName: String("didReceiveLocalNotification"),notification: notification)

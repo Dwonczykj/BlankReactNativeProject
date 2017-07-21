@@ -67,8 +67,10 @@ export default class BlankReactNativeProject extends Component {
               message: 'Created at: ' + date.toString()
           }
       }, (notificationData) => {
-        console.log(notificationData);
+          console.log(notificationData);
+          //Display the notification if you want.
           this.setState({lastNotification: notificationData});
+
       });
   }
 
