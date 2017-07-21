@@ -12,15 +12,15 @@ import Foundation
 class JSEventEmitter: RCTEventEmitter {
   
   @objc override func supportedEvents() -> [String]! {
-    return ["sayHello"];
+    return ["sayHello", "didReceiveLocalNotification"];
   }
   
   @objc func tellJS() -> Void {
     self.sendEvent(withName: "sayHello", body: "Hello from the body")
   }
   
-  func tellJS(eventName: String, notification: UILocalNotification) -> Void {
-    self.sendEvent(withName: eventName, body: NotificationToDictionaryTransformer(notification: notification).transform())
-  }
+//  @objc(tellJS:eventName:notification:) static func tellJS(application: UIApplication, eventName: String, notification: UILocalNotification) -> Void {
+//    self.sendEvent(withName: eventName, body: NotificationToDictionaryTransformer(notification: notification).transform())
+//  }
   
 }

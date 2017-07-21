@@ -9,10 +9,13 @@
 #import <React/RCTBridgeModule.h>
 
 @interface RCT_EXTERN_MODULE(LocalNotificator, NSObject)
+//@interface LocalNotificator : NSObject<RCTBridgeModule>
 
-RCT_EXTERN_METHOD(requestPermissions)
+RCT_EXTERN_METHOD(requestPermissions);
 RCT_EXTERN_METHOD(checkPermissions:(RCTResponseSenderBlock)callback)
 RCT_EXTERN_METHOD(scheduleLocalNotification:(NSDictionary *)notificationData callback:(RCTResponseSenderBlock)callback)
 RCT_EXTERN_METHOD(cancelLocalNotification:(NSString *)uuid)
+RCT_EXTERN_METHOD(testMe:(NSString *)text)
+
 
 @end

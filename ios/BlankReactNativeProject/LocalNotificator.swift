@@ -7,8 +7,8 @@
 //
 
 import Foundation
-
 import UIKit
+
 
 @objc(LocalNotificator)
 class LocalNotificator: NSObject {
@@ -30,7 +30,11 @@ class LocalNotificator: NSObject {
     app.registerForRemoteNotifications()
   }
   
-  @objc func checkPermissions(callback: RCTResponseSenderBlock) -> Void {
+  @objc(testMe:) func testMe(text: String) {
+    print(text)
+  }
+  
+  @objc(checkPermissions:) func checkPermissions(callback: RCTResponseSenderBlock) -> Void {
     let defaultPermissions = ["alert": false, "badge": false, "sound": false]
     
     if (RCTRunningInAppExtension()) {
@@ -55,7 +59,7 @@ class LocalNotificator: NSObject {
     callback([defaultPermissions]);
   }
   
-  @objc func scheduleLocalNotification(notificationData: [String: AnyObject], callback: RCTResponseSenderBlock) -> Void {
+  @objc(scheduleLocalNotification:callback:) func scheduleLocalNotification(notificationData: [String: AnyObject], callback: RCTResponseSenderBlock) -> Void {
     let notification = createLocalNotification(notificationData: notificationData)
     RCTSharedApplication()?.scheduleLocalNotification(notification)
     callback([NotificationToDictionaryTransformer(notification: notification).transform()]);
@@ -91,7 +95,7 @@ class LocalNotificator: NSObject {
     return notification;
   }
   
-  @objc func cancelLocalNotification(uuid: String) -> Void {
+  @objc(cancelLocalNotification:) func cancelLocalNotification(uuid: String) -> Void {
     for notification in (RCTSharedApplication()?.scheduledLocalNotifications)! {
       
       guard (notification.userInfo != nil) else {

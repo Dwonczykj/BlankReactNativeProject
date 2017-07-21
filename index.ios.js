@@ -41,54 +41,57 @@ export default class BlankReactNativeProject extends Component {
     });
 
 
-    // this.didReceiveLocalNotification = (notification) => {
-    //     AlertIOS.alert(notification.userInfo.message);
-    //     this.setState({lastNotification: null});
-    // };
-    //
+    this.didReceiveLocalNotification = (notification) => {
+        AlertIOS.alert(notification.userInfo.message);
+        this.setState({lastNotification: null});
+    };
+    NativeModules.LocalNotificator.testMe("Hey");
+    // NativeModules.LocalNotificator.checkPermissions((arr) => console.log(arr));
     // const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
     // myModuleEvnt.addListener('sayHello', (data) => console.log(data));
     // myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
 
+
     // React.NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);
   }
 
-  // generateNotification() {
-  // 	let date = new Date;
-  // 	NativeModules.LocalNotificator.scheduleLocalNotification({
-  //         alertBody: 'The body',
-  //         fireDate: date.getTime() + 1000 * 10,
-  //         alertAction: 'View',
-  //         alertTitle: 'The title',
-  //         userInfo: {
-  //             UUID: this.lastNotification,
-  //             message: 'Created at: ' + date.toString()
-  //         }
-  //     }, (notificationData) => {
-  //         this.setState({lastNotification: notificationData});
-  //     });
-  // }
-  //
-  // cancelNotification() {
-  //     NativeModules.LocalNotificator.cancelLocalNotification(this.state.lastNotification.userInfo.UUID);
-  //     this.setState({lastNotification: null});
-  // }
-  //
-  // getCancelNotificationButton() {
-  // 	return (
-  // 		<TouchableOpacity onPress={() => this.cancelNotification()} style={[styles.button, styles.errorButton]}>
-  // 		<Text>Cancel Notification</Text>
-  // 		</TouchableOpacity>
-  // 	);
-  // }
-  //
-  // getGenerateNotificationButton() {
-  // 	return (
-  // 		<TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
-  // 		<Text>Generate New Notification</Text>
-  // 		</TouchableOpacity>
-  // 	);
-  // }
+  generateNotification() {
+  	let date = new Date;
+  	NativeModules.LocalNotificator.scheduleLocalNotification({
+          alertBody: 'The body',
+          fireDate: date.getTime() + 1000 * 10,
+          alertAction: 'View',
+          alertTitle: 'The title',
+          userInfo: {
+              UUID: this.lastNotification,
+              message: 'Created at: ' + date.toString()
+          }
+      }, (notificationData) => {
+        console.log(notificationData);
+          this.setState({lastNotification: notificationData});
+      });
+  }
+
+  cancelNotification() {
+      NativeModules.LocalNotificator.cancelLocalNotification(this.state.lastNotification.userInfo.UUID);
+      this.setState({lastNotification: null});
+  }
+
+  getCancelNotificationButton() {
+  	return (
+  		<TouchableOpacity onPress={() => this.cancelNotification()} style={[styles.button, styles.errorButton]}>
+  		<Text>Cancel Notification</Text>
+  		</TouchableOpacity>
+  	);
+  }
+
+  getGenerateNotificationButton() {
+  	return (
+  		<TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
+  		  <Text>Generate New Notification</Text>
+  		</TouchableOpacity>
+  	);
+  }
 
   onLogin(){
     this.setState({isLoggedIn: true});
@@ -126,11 +129,18 @@ export default class BlankReactNativeProject extends Component {
       );
     }else{
       return (
-        <Login onLogin={this.onLogin} />
+
+        <View style={styles.container}>
+          <TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
+            <Text>Generate New Notification</Text>
+          </TouchableOpacity>
+        </View>
       );
     }
   }
 }
+
+// <Login onLogin={this.onLogin} />
 
 const styles = StyleSheet.create({
   container: {
@@ -150,10 +160,24 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   loader: {
+  },
+  button: {
+    height: 50,
+    maxWidth: 300,
+    minWidth: 300,
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    alignSelf: 'center',
+    marginTop: 30,
+    marginBottom: 10,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5
   }
 });
 
 // request permissions
-// NativeModules.LocalNotificator.requestPermissions();
+NativeModules.LocalNotificator.requestPermissions();
 
 AppRegistry.registerComponent('BlankReactNativeProject', () => BlankReactNativeProject);

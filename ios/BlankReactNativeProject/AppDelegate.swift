@@ -12,7 +12,7 @@ import UIKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, AlarmApplicationDelegate */{
   var window: UIWindow?
-  var bridge: RCTBridge!
+//  var bridge: RCTBridge!
 //    var audioPlayer: AVAudioPlayer?
 //    let alarmScheduler: AlarmSchedulerDelegate = Scheduler()
 //    var alarmModel: Alarms = Alarms()
@@ -50,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
     
     
     
-    self.bridge = rootView?.bridge
+//    self.bridge = rootView?.bridge
     
     self.window = UIWindow(frame: UIScreen.main.bounds)
     let rootViewController = UIViewController()
@@ -68,12 +68,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //    
 //      }
   
-//  func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-//    RCTSharedApplication()?.cancelLocalNotification(notification)
+  func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+    print(notification)
+    //RCTSharedApplication()?.cancelLocalNotification(notification)
+    
 //    let jsEventEmitter = JSEventEmitter()
-//    jsEventEmitter.tellJS(eventName: String("didReceiveLocalNotification"),notification: notification)
-////    self.bridge.eventDispatcher().sendAppEvent(withName: String("didReceiveLocalNotification"), body: NotificationToDictionaryTransformer(notification: notification).transform())
-//  }
+//    
+//    jsEventEmitter.tellJS(application: application, eventName: String("didReceiveLocalNotification"),notification: notification)
+//    self.bridge.eventDispatcher().sendAppEvent(withName: String("didReceiveLocalNotification"), body: NotificationToDictionaryTransformer(notification: notification).transform())
+  }
   
     
 //    //receive local notification when app in foreground
