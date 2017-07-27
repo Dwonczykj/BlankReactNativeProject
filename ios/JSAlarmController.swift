@@ -13,14 +13,10 @@ class JSAlarmController: NSObject {
   
   var alarmScheduler: AlarmSchedulerDelegate = Scheduler()
   var alarmModel: Alarms = Alarms()
-  var snoozeEnabled: Bool = false
-  var enabled: Bool!
+//  var snoozeEnabled: Bool = false
+//  var enabled: Bool!
   
-  @objc override func supportedEvents() -> [String]! {
-    return ["sayHello", "didReceiveLocalNotification"];
-  }
-  
-  @objc func saveEditAlarm(alarmDetails: [String: AnyObject]) {
+  @objc func saveEditAlarm(alarmID: String, alarmDetails: [String: AnyObject], isEditMode: Bool, callback: RCTResponseSenderBlock) {
     
     var tempAlarm = Alarm()
     tempAlarm.date = alarmDetails["date"] as! Date
@@ -28,18 +24,23 @@ class JSAlarmController: NSObject {
     tempAlarm.enabled = true
     tempAlarm.mediaLabel = segueInfo.mediaLabel
     tempAlarm.mediaID = segueInfo.mediaID
-    tempAlarm.snoozeEnabled = snoozeEnabled
+    tempAlarm.snoozeEnabled = alarmDetails["snoozeEnabled"] as! Bool
     tempAlarm.repeatWeekdays = segueInfo.repeatWeekdays
     tempAlarm.uuid = UUID().uuidString
     tempAlarm.onSnooze = false
-    if segueInfo.isEditMode {
-      alarmModel.alarms[index] = tempAlarm
+    if isEditMode {
+      alarmModel.alarms[alarmID] = tempAlarm
+      //update alarms from an array to a dictionary and then get an alarm by its id, not its index.
     }
     else {
       alarmModel.alarms.append(tempAlarm)
     }
-    self.performSegue(withIdentifier: Id.saveSegueIdentifier, sender: self)
+    
+    //Emit the alarm details so that can be passed into the store.
+    callback([tempAlarm])
   }
+  
+  
 
 
 }
