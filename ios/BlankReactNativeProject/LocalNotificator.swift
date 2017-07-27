@@ -66,6 +66,37 @@ class LocalNotificator: NSObject {
     return;
   }
   
+  private func createNotification(notificationData: [String: AnyObject]) -> UNNotificationRequest {
+    let notification = UNNotificationRequest()
+    notification.init
+    notification.soundName = UILocalNotificationDefaultSoundName
+    notification.alertBody = notificationData["alertBody"] as? String
+    notification.alertAction = notificationData["alertAction"] as? String
+    notification.alertTitle = notificationData["alertTitle"] as? String
+    
+    if let hasAction = notificationData["hasAction"] {
+      notification.hasAction = (hasAction as? Bool)!
+    }
+    
+    
+    notification.category = "schedulerViewItemCategory"
+    
+    if let fireDate = notificationData["fireDate"] {
+      notification.fireDate = RCTConvert.nsDate(fireDate)
+    }
+    
+    let uuid = NSUUID().uuidString
+    
+    if let userInfo = notificationData["userInfo"] as? [NSObject : AnyObject]{
+      notification.userInfo = userInfo
+      notification.userInfo!["UUID"] = uuid
+    } else {
+      notification.userInfo = ["UUID": uuid]
+    }
+    
+    return notification;
+  }
+  
   private func createLocalNotification(notificationData: [String: AnyObject]) -> UILocalNotification {
     let notification = UILocalNotification()
     notification.soundName = UILocalNotificationDefaultSoundName
@@ -76,6 +107,8 @@ class LocalNotificator: NSObject {
     if let hasAction = notificationData["hasAction"] {
       notification.hasAction = (hasAction as? Bool)!
     }
+    
+    notification.
     
     notification.category = "schedulerViewItemCategory"
     

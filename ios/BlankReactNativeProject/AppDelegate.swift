@@ -68,23 +68,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //    
 //      }
   
-  func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-    print(notification)
-    //RCTSharedApplication()?.cancelLocalNotification(notification)
-    
-    
-//    let jsEventEmitter = JSEventEmitter()
+//  func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+//    print(notification)
+//    //RCTSharedApplication()?.cancelLocalNotification(notification)
 //    
-//    jsEventEmitter.tellJS(application: application, eventName: String("didReceiveLocalNotification"),notification: notification)
-//    self.bridge.eventDispatcher().sendAppEvent(withName: String("didReceiveLocalNotification"), body: NotificationToDictionaryTransformer(notification: notification).transform())
-  }
+//    
+////    let jsEventEmitter = JSEventEmitter()
+////    
+////    jsEventEmitter.tellJS(application: application, eventName: String("didReceiveLocalNotification"),notification: notification)
+////    self.bridge.eventDispatcher().sendAppEvent(withName: String("didReceiveLocalNotification"), body: NotificationToDictionaryTransformer(notification: notification).transform())
+//  }
   
+  
+  func application(_ application: UIApplication,
+                            didReceiveRemoteNotification userInfo: [AnyHashable : Any],
+                            fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void){
+    let storageController = UIAlertController(title: "Alarm", message: "Hey there", preferredStyle: .alert)
     
-//    //receive local notification when app in foreground
-//    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
-//      
-//        //show an alert window
-//        let storageController = UIAlertController(title: "Alarm", message: nil, preferredStyle: .alert)
+  }
+    
+    //receive local notification when app in foreground
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+      
+        print(notification)
+      
+        //show an alert window
+        let storageController = UIAlertController(title: "Alarm", message: "Hey there", preferredStyle: .alert)
 //        var isSnooze: Bool = false
 //        var soundName: String = ""
 //        var index: Int = -1
@@ -93,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //            soundName = userInfo["soundName"] as! String
 //            index = userInfo["index"] as! Int
 //        }
-//        
+      
 //        playSound(soundName)
 //        //schedule notification for snooze
 //        if isSnooze {
@@ -119,10 +128,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //        
 //        storageController.addAction(stopOption)
 //        window?.visibleViewController?.navigationController?.present(storageController, animated: true, completion: nil)
-//    }
-//    
-//    //snooze notification handler when app in background
-//    func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, completionHandler: @escaping () -> Void) {
+          window?.visibleViewController?.present(storageController, animated: true, completion: nil)
+    }
+    
+    //snooze notification handler when app in background
+    func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, completionHandler: @escaping () -> Void) {
 //        var index: Int = -1
 //        var soundName: String = ""
 //        if let userInfo = notification.userInfo {
@@ -136,8 +146,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //            self.alarmModel.alarms[index].onSnooze = true
 //        }
 //        completionHandler()
-//    }
-//    
+    }
+//
 //    //print out all registed NSNotification for debug
 //    func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
 //        
@@ -189,30 +199,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate/*, AVAudioPlayerDelegate, 
 //        
 //    }
 //    
-//    //UIApplicationDelegate protocol
-//    func applicationWillResignActive(_ application: UIApplication) {
-//        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-//        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-//        //        audioPlayer?.pause()
-//    }
-//    
-//    func applicationDidEnterBackground(_ application: UIApplication) {
-//        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-//        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-//    }
-//    
-//    func applicationWillEnterForeground(_ application: UIApplication) {
-//        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-//    }
-//    
-//    func applicationDidBecomeActive(_ application: UIApplication) {
-//        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-//        //        audioPlayer?.play()
+    //UIApplicationDelegate protocol
+    func applicationWillResignActive(_ application: UIApplication) {
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+        //        audioPlayer?.pause()
+    }
+
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    }
+
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        //        audioPlayer?.play()
 //        alarmScheduler.checkNotification()
-//    }
-//    
-//    func applicationWillTerminate(_ application: UIApplication) {
-//        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-//    }
+    }
     
+    func applicationWillTerminate(_ application: UIApplication) {
+        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+  
 }

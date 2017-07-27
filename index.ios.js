@@ -59,7 +59,7 @@ export default class BlankReactNativeProject extends Component {
   	let date = new Date;
   	NativeModules.LocalNotificator.scheduleLocalNotification({
           alertBody: 'The body',
-          fireDate: date.getTime() + 1000 * 10,
+          fireDate: date.getTime() + 1000 * 15,
           alertAction: 'View',
           alertTitle: 'The title',
           userInfo: {

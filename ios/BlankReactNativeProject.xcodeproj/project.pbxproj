@@ -47,14 +47,23 @@
 		C48569C3599045E89010FDCE /* libKCKeepAwake.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A0B89FB6724B8B89198BDE /* libKCKeepAwake.a */; };
 		CB8082908EB1CF0F1A9A3BEE /* libPods-BlankReactNativeProjectTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CDAC063810F76B5E0E00059 /* libPods-BlankReactNativeProjectTests.a */; };
 		D2556D5E33694BE7BDBD77B6 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 760F0D2C42E14D0A8FA0EF03 /* FontAwesome.ttf */; };
-		D428CD881F214D0C00E69A45 /* JSEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */; };
-		D428CDA91F2155D800E69A45 /* JSEventEmitterBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */; };
+		D41A51471F29B737005F3D8A /* PropertyReflectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41A51461F29B737005F3D8A /* PropertyReflectable.swift */; };
+		D41A51681F29BC5B005F3D8A /* JSAlarmController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */; };
+		D41A516A1F29BD6B005F3D8A /* JSAlarmControllerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */; };
 		D44F37121F209EA400F065EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37111F209EA400F065EE /* AppDelegate.swift */; };
 		D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */; };
-		D44F37351F20A46E00F065EE /* LocalNotificator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37341F20A46E00F065EE /* LocalNotificator.swift */; };
-		D44F37371F20A4F000F065EE /* LocalNotificatorBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D44F37361F20A4F000F065EE /* LocalNotificatorBridge.m */; };
 		D453636B98BE4018B69DAB72 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AD28EA5A47B4861BF7CC58D /* Ionicons.ttf */; };
 		D47D24691E99A8AA0010F76E /* Encoding.m in Sources */ = {isa = PBXBuildFile; fileRef = D47D24681E99A8AA0010F76E /* Encoding.m */; };
+		D48494B41F294274001B6A70 /* AlarmModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494B31F294274001B6A70 /* AlarmModel.swift */; };
+		D48494B71F29428E001B6A70 /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494B51F29428E001B6A70 /* Identifier.swift */; };
+		D48494B81F29428E001B6A70 /* Persistable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494B61F29428E001B6A70 /* Persistable.swift */; };
+		D48494BB1F29429B001B6A70 /* JSEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494B91F29429B001B6A70 /* JSEventEmitter.swift */; };
+		D48494BC1F29429B001B6A70 /* JSEventEmitterBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D48494BA1F29429B001B6A70 /* JSEventEmitterBridge.m */; };
+		D48494BF1F2942AC001B6A70 /* LocalNotificator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494BD1F2942AC001B6A70 /* LocalNotificator.swift */; };
+		D48494C01F2942AC001B6A70 /* LocalNotificatorBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D48494BE1F2942AC001B6A70 /* LocalNotificatorBridge.m */; };
+		D48494C21F2942C7001B6A70 /* Scheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494C11F2942C7001B6A70 /* Scheduler.swift */; };
+		D48494C41F2942EA001B6A70 /* UIWindow+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494C31F2942EA001B6A70 /* UIWindow+Extension.swift */; };
+		D48494C61F294301001B6A70 /* AlarmSchedulerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48494C51F294301001B6A70 /* AlarmSchedulerDelegate.swift */; };
 		D4C1C3171EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D4C1C3161EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 */; };
 		D91798F1A3764B3D856A87D5 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F035C1D130B14F3CA4F8E3B4 /* Zocial.ttf */; };
 		E0A363E08271445BAE2E27E8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A631C6093D5E419FABCA74D6 /* MaterialCommunityIcons.ttf */; };
@@ -348,15 +357,24 @@
 		B949BA43FAC74F3E8AA2B89F /* libAirMaps.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libAirMaps.a; sourceTree = "<group>"; };
 		C6D14A9F08D04962B481E671 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 		C957EE7E488A439A901B6123 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
-		D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSEventEmitter.swift; sourceTree = "<group>"; };
-		D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSEventEmitterBridge.m; sourceTree = "<group>"; };
+		D41A51461F29B737005F3D8A /* PropertyReflectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PropertyReflectable.swift; path = BlankReactNativeProject/PropertyReflectable.swift; sourceTree = "<group>"; };
+		D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSAlarmController.swift; sourceTree = "<group>"; };
+		D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSAlarmControllerBridge.m; sourceTree = "<group>"; };
 		D44F37101F209EA400F065EE /* BlankReactNativeProject-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BlankReactNativeProject-Bridging-Header.h"; sourceTree = "<group>"; };
 		D44F37111F209EA400F065EE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = BlankReactNativeProject/AppDelegate.swift; sourceTree = "<group>"; };
 		D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationToDictionaryTransformer.swift; path = BlankReactNativeProject/NotificationToDictionaryTransformer.swift; sourceTree = "<group>"; };
-		D44F37341F20A46E00F065EE /* LocalNotificator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocalNotificator.swift; path = BlankReactNativeProject/LocalNotificator.swift; sourceTree = "<group>"; };
-		D44F37361F20A4F000F065EE /* LocalNotificatorBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalNotificatorBridge.m; sourceTree = "<group>"; };
 		D47D24671E99A8AA0010F76E /* Encoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encoding.h; path = BlankReactNativeProject/Encoding.h; sourceTree = "<group>"; };
 		D47D24681E99A8AA0010F76E /* Encoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Encoding.m; path = BlankReactNativeProject/Encoding.m; sourceTree = "<group>"; };
+		D48494B31F294274001B6A70 /* AlarmModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AlarmModel.swift; path = BlankReactNativeProject/AlarmModel.swift; sourceTree = "<group>"; };
+		D48494B51F29428E001B6A70 /* Identifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Identifier.swift; path = BlankReactNativeProject/Identifier.swift; sourceTree = "<group>"; };
+		D48494B61F29428E001B6A70 /* Persistable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Persistable.swift; path = BlankReactNativeProject/Persistable.swift; sourceTree = "<group>"; };
+		D48494B91F29429B001B6A70 /* JSEventEmitter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = JSEventEmitter.swift; path = BlankReactNativeProject/JSEventEmitter.swift; sourceTree = "<group>"; };
+		D48494BA1F29429B001B6A70 /* JSEventEmitterBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JSEventEmitterBridge.m; path = BlankReactNativeProject/JSEventEmitterBridge.m; sourceTree = "<group>"; };
+		D48494BD1F2942AC001B6A70 /* LocalNotificator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocalNotificator.swift; path = BlankReactNativeProject/LocalNotificator.swift; sourceTree = "<group>"; };
+		D48494BE1F2942AC001B6A70 /* LocalNotificatorBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LocalNotificatorBridge.m; path = BlankReactNativeProject/LocalNotificatorBridge.m; sourceTree = "<group>"; };
+		D48494C11F2942C7001B6A70 /* Scheduler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Scheduler.swift; path = BlankReactNativeProject/Scheduler.swift; sourceTree = "<group>"; };
+		D48494C31F2942EA001B6A70 /* UIWindow+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIWindow+Extension.swift"; path = "BlankReactNativeProject/UIWindow+Extension.swift"; sourceTree = "<group>"; };
+		D48494C51F294301001B6A70 /* AlarmSchedulerDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AlarmSchedulerDelegate.swift; path = BlankReactNativeProject/AlarmSchedulerDelegate.swift; sourceTree = "<group>"; };
 		D4C1C3161EDB7B3E00CCF4F9 /* Alarm-clock-sound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Alarm-clock-sound.mp3"; path = "../sounds_NOT_COMMERCIAL/Alarm-clock-sound.mp3"; sourceTree = "<group>"; };
 		D81202119EF7E3A8B7C19B8B /* Pods-BlankReactNativeProjectTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlankReactNativeProjectTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlankReactNativeProjectTests/Pods-BlankReactNativeProjectTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DBC78186E62E5D0FC345F3E0 /* Pods-BlankReactNativeProject-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BlankReactNativeProject-tvOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-BlankReactNativeProject-tvOS/Pods-BlankReactNativeProject-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
@@ -506,19 +524,19 @@
 		13B07FAE1A68108700A75B9A /* BlankReactNativeProject */ = {
 			isa = PBXGroup;
 			children = (
-				D47D24671E99A8AA0010F76E /* Encoding.h */,
-				D47D24681E99A8AA0010F76E /* Encoding.m */,
+				D48494931F294192001B6A70 /* Alarm */,
+				D41D743A1F27F301003724E9 /* Protocol */,
+				D42499041F2371A90019747D /* JSEventEmitter */,
+				D42499031F2371A10019747D /* LocalNotificator */,
+				D42499021F2371860019747D /* Encoding */,
+				D42499011F23717A0019747D /* App */,
+				D42498DF1F236E060019747D /* Extensions */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				D44F37111F209EA400F065EE /* AppDelegate.swift */,
 				D44F37101F209EA400F065EE /* BlankReactNativeProject-Bridging-Header.h */,
 				D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */,
-				D44F37341F20A46E00F065EE /* LocalNotificator.swift */,
-				D44F37361F20A4F000F065EE /* LocalNotificatorBridge.m */,
-				D428CD871F214D0C00E69A45 /* JSEventEmitter.swift */,
-				D428CDA81F2155D800E69A45 /* JSEventEmitterBridge.m */,
 			);
 			name = BlankReactNativeProject;
 			sourceTree = "<group>";
@@ -652,6 +670,63 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D41D743A1F27F301003724E9 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				D41A51461F29B737005F3D8A /* PropertyReflectable.swift */,
+				D48494C51F294301001B6A70 /* AlarmSchedulerDelegate.swift */,
+				D48494B61F29428E001B6A70 /* Persistable.swift */,
+			);
+			name = Protocol;
+			sourceTree = "<group>";
+		};
+		D42498DF1F236E060019747D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D48494C31F2942EA001B6A70 /* UIWindow+Extension.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		D42499011F23717A0019747D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				D48494B51F29428E001B6A70 /* Identifier.swift */,
+				D48494C11F2942C7001B6A70 /* Scheduler.swift */,
+				D44F37111F209EA400F065EE /* AppDelegate.swift */,
+				D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */,
+				D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		D42499021F2371860019747D /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				D47D24671E99A8AA0010F76E /* Encoding.h */,
+				D47D24681E99A8AA0010F76E /* Encoding.m */,
+			);
+			name = Encoding;
+			sourceTree = "<group>";
+		};
+		D42499031F2371A10019747D /* LocalNotificator */ = {
+			isa = PBXGroup;
+			children = (
+				D48494BD1F2942AC001B6A70 /* LocalNotificator.swift */,
+				D48494BE1F2942AC001B6A70 /* LocalNotificatorBridge.m */,
+			);
+			name = LocalNotificator;
+			sourceTree = "<group>";
+		};
+		D42499041F2371A90019747D /* JSEventEmitter */ = {
+			isa = PBXGroup;
+			children = (
+				D48494B91F29429B001B6A70 /* JSEventEmitter.swift */,
+				D48494BA1F29429B001B6A70 /* JSEventEmitterBridge.m */,
+			);
+			name = JSEventEmitter;
+			sourceTree = "<group>";
+		};
 		D46C2F401EB7A292007BDD7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -666,6 +741,14 @@
 				D46C2F621EB7A292007BDD7A /* libAirMaps.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D48494931F294192001B6A70 /* Alarm */ = {
+			isa = PBXGroup;
+			children = (
+				D48494B31F294274001B6A70 /* AlarmModel.swift */,
+			);
+			name = Alarm;
 			sourceTree = "<group>";
 		};
 		D484D0EA1EC8A12000CDF714 /* Products */ = {
@@ -1408,13 +1491,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D48494C21F2942C7001B6A70 /* Scheduler.swift in Sources */,
+				D41A51681F29BC5B005F3D8A /* JSAlarmController.swift in Sources */,
+				D48494BB1F29429B001B6A70 /* JSEventEmitter.swift in Sources */,
+				D48494BF1F2942AC001B6A70 /* LocalNotificator.swift in Sources */,
+				D48494B81F29428E001B6A70 /* Persistable.swift in Sources */,
+				D48494C61F294301001B6A70 /* AlarmSchedulerDelegate.swift in Sources */,
 				D44F37121F209EA400F065EE /* AppDelegate.swift in Sources */,
-				D428CD881F214D0C00E69A45 /* JSEventEmitter.swift in Sources */,
+				D41A51471F29B737005F3D8A /* PropertyReflectable.swift in Sources */,
+				D48494C41F2942EA001B6A70 /* UIWindow+Extension.swift in Sources */,
+				D48494B71F29428E001B6A70 /* Identifier.swift in Sources */,
+				D48494B41F294274001B6A70 /* AlarmModel.swift in Sources */,
 				D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */,
-				D44F37371F20A4F000F065EE /* LocalNotificatorBridge.m in Sources */,
-				D44F37351F20A46E00F065EE /* LocalNotificator.swift in Sources */,
+				D48494C01F2942AC001B6A70 /* LocalNotificatorBridge.m in Sources */,
 				D47D24691E99A8AA0010F76E /* Encoding.m in Sources */,
-				D428CDA91F2155D800E69A45 /* JSEventEmitterBridge.m in Sources */,
+				D48494BC1F29429B001B6A70 /* JSEventEmitterBridge.m in Sources */,
+				D41A516A1F29BD6B005F3D8A /* JSAlarmControllerBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
