@@ -47,16 +47,24 @@ export default class BlankReactNativeProject extends Component {
     };
     NativeModules.LocalNotificator.testMe("Hey");
     // NativeModules.LocalNotificator.checkPermissions((arr) => console.log(arr));
-    // const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
-    // myModuleEvnt.addListener('sayHello', (data) => console.log(data));
-    // myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
+    const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
+    myModuleEvnt.addListener('sayHello', (data) => console.log(data));
+    myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
 
 
     // React.NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);
+
+    setTimeout(
+      () => {
+        this.generateNotification()
+      },
+      8000
+    );
   }
 
   generateNotification() {
   	let date = new Date;
+
   	NativeModules.LocalNotificator.scheduleLocalNotification({
           alertBody: 'The body',
           fireDate: date.getTime() + 1000 * 15,
@@ -72,6 +80,7 @@ export default class BlankReactNativeProject extends Component {
           this.setState({lastNotification: notificationData});
 
       });
+      //At the moment, this should not throw a notification as it doesnt have the soundName in userInfo
   }
 
   cancelNotification() {
@@ -131,18 +140,17 @@ export default class BlankReactNativeProject extends Component {
       );
     }else{
       return (
-
-        <View style={styles.container}>
-          <TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
-            <Text>Generate New Notification</Text>
-          </TouchableOpacity>
-        </View>
+        <Login onLogin={this.onLogin} />
       );
     }
   }
 }
 
-// <Login onLogin={this.onLogin} />
+// <View style={styles.container}>
+//   <TouchableOpacity onPress={() => this.generateNotification()} style={styles.button}>
+//     <Text>Generate New Notification</Text>
+//   </TouchableOpacity>
+// </View>
 
 const styles = StyleSheet.create({
   container: {

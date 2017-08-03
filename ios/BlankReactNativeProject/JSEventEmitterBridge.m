@@ -12,5 +12,7 @@
 @interface RCT_EXTERN_MODULE(JSEventEmitter, RCTEventEmitter<RCTBridgeModule>)
 
 RCT_EXTERN_METHOD(tellJS)
+RCT_EXTERN_METHOD(tellJSWithBody:(NSString *)SoundName)
+//RCT_EXTERN_METHOD(emitEvent:(NSString *)eventName eventBody: (NSDictionary *)eventBody)
 //RCT_EXTERN_METHOD(tellJS:(UIApplication *)application eventName(NSString *)eventName notification:(UILocalNotification)notification)
 @end

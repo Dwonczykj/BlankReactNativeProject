@@ -17,8 +17,8 @@ class Scheduler : AlarmSchedulerDelegate
         var snoozeEnabled: Bool = false
         if let n = UIApplication.shared.scheduledLocalNotifications {
             if let result = minFireDateWithIndex(notifications: n) {
-                let i = result.1
-                snoozeEnabled = alarmModel.alarms[i].snoozeEnabled
+                let id = result.1
+                snoozeEnabled = alarmModel.alarms[id]!.snoozeEnabled
             }
         }
         // Specify the notification types.
@@ -115,7 +115,7 @@ class Scheduler : AlarmSchedulerDelegate
         return d
     }
     
-    func setNotificationWithDate(_ date: Date, onWeekdaysForNotify weekdays:[Int], snoozeEnabled:Bool,  onSnooze: Bool, soundName: String, index: Int) {
+    func setNotificationWithDate(_ date: Date, onWeekdaysForNotify weekdays:[Int], snoozeEnabled:Bool,  onSnooze: Bool, soundName: String, id: String) {
         let AlarmNotification: UILocalNotification = UILocalNotification()
         AlarmNotification.alertBody = "Wake Up!"
         AlarmNotification.alertAction = "Open App"
@@ -135,10 +135,10 @@ class Scheduler : AlarmSchedulerDelegate
         syncAlarmModel()
         for d in datesForNotification {
             if onSnooze {
-                alarmModel.alarms[index].date = Scheduler.correctSecondComponent(date: alarmModel.alarms[index].date)
+                alarmModel.alarms[id]!.date = Scheduler.correctSecondComponent(date: alarmModel.alarms[id]!.date)
             }
             else {
-                alarmModel.alarms[index].date = d
+                alarmModel.alarms[id]?.date = d
             }
             AlarmNotification.fireDate = d
             UIApplication.shared.scheduleLocalNotification(AlarmNotification)
@@ -147,47 +147,50 @@ class Scheduler : AlarmSchedulerDelegate
         
     }
     
-    func setNotificationForSnooze(snoozeMinute: Int, soundName: String, index: Int) {
+    func setNotificationForSnooze(snoozeMinute: Int, soundName: String, id: String) {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let now = Date()
         let snoozeTime = (calendar as NSCalendar).date(byAdding: NSCalendar.Unit.minute, value: snoozeMinute, to: now, options:.matchStrictly)!
-        setNotificationWithDate(snoozeTime, onWeekdaysForNotify: [Int](), snoozeEnabled: true, onSnooze:true, soundName: soundName, index: index)
+        setNotificationWithDate(snoozeTime, onWeekdaysForNotify: [Int](), snoozeEnabled: true, onSnooze:true, soundName: soundName, id: id)
     }
     
     func reSchedule() {
         //cancel all and register all is often more convenient
         UIApplication.shared.cancelAllLocalNotifications()
         syncAlarmModel()
-        for i in 0..<alarmModel.count{
-            let alarm = alarmModel.alarms[i]
-            if alarm.enabled {
-                setNotificationWithDate(alarm.date as Date, onWeekdaysForNotify: alarm.repeatWeekdays, snoozeEnabled: alarm.snoozeEnabled, onSnooze: false, soundName: alarm.mediaLabel, index: i)
-            }
+      for (alarmID,_) in alarmModel.alarms {
+        let alarm = alarmModel.alarms[alarmID]
+        if (alarm?.enabled)! {
+          setNotificationWithDate(alarm!.date, onWeekdaysForNotify: (alarm?.repeatWeekdays)!, snoozeEnabled: (alarm?.snoozeEnabled)!, onSnooze: false, soundName: (alarm?.mediaLabel)!, id: (alarm?.uuid)!)
         }
+      }
     }
-    
+  
     // workaround for some situation that alarm model is not setting properly (when app on background or not launched)
     func checkNotification() {
         alarmModel = Alarms()
         let notifications = UIApplication.shared.scheduledLocalNotifications
         if notifications!.isEmpty {
-            for i in 0..<alarmModel.count {
-                alarmModel.alarms[i].enabled = false
-            }
+//            for i in 0..<alarmModel.count {
+//                alarmModel.alarms.[i].enabled = false
+//            }
+          for (alarmID,_) in alarmModel.alarms {
+            alarmModel.alarms[alarmID]?.enabled = false
+          }
         }
         else {
-            for (i, alarm) in alarmModel.alarms.enumerated() {
+            for (_, alarm) in alarmModel.alarms.enumerated() {
                 var isOutDated = true
-                if alarm.onSnooze {
+                if alarm.value.onSnooze {
                     isOutDated = false
                 }
                 for n in notifications! {
-                    if alarm.date >= n.fireDate! {
+                    if alarm.value.date >= n.fireDate! {
                         isOutDated = false
                     }
                 }
                 if isOutDated {
-                    alarmModel.alarms[i].enabled = false
+                    alarmModel.alarms[alarm.value.uuid]?.enabled = false
                 }
             }
         }
@@ -210,19 +213,19 @@ class Scheduler : AlarmSchedulerDelegate
         else {return .after}
     }
     
-    private func minFireDateWithIndex(notifications: [UILocalNotification]) -> (Date, Int)? {
+    private func minFireDateWithIndex(notifications: [UILocalNotification]) -> (Date, String)? {
         if notifications.isEmpty {
             return nil
         }
-        var minIndex = -1
+        var minId = ""
         var minDate: Date = notifications.first!.fireDate!
         for n in notifications {
-            let index = n.userInfo!["index"] as! Int
+            let id = n.userInfo!["uuid"] as! String
             if(n.fireDate! <= minDate) {
                 minDate = n.fireDate!
-                minIndex = index
+                minId = id
             }
         }
-        return (minDate, minIndex)
+        return (minDate, minId)
     }
 }

@@ -60,50 +60,60 @@ extension Alarm {
 
 //This can be considered as a viewModel
 class Alarms: Persistable {
-    let ud: UserDefaults = UserDefaults.standard
-    let persistKey: String = "myAlarmKey"
-    var alarms: [Alarm] = [] {
-        //observer, sync with UserDefaults
-        didSet{
-            persist()
-        }
+  let ud: UserDefaults = UserDefaults.standard
+  let persistKey: String = "myAlarmKey"
+  var alarms: [String:Alarm] = [:] {
+    //observer, sync with UserDefaults
+    didSet{
+      persist()
     }
-    
-    private func getAlarmsDictRepresentation()->[PropertyReflectable.RepresentationType] {
-        return alarms.map {$0.propertyDictRepresentation}
+  }
+  
+  private func getAlarmsDictRepresentation()->[PropertyReflectable.RepresentationType] {
+    return alarms.values.map {dict in dict.propertyDictRepresentation}
+  }
+  
+  init() {
+    alarms = getAlarms()
+  }
+  
+  func persist() {
+    ud.set(getAlarmsDictRepresentation(), forKey: persistKey)
+    ud.synchronize()
+  }
+  
+  func unpersist() {
+    for key in ud.dictionaryRepresentation().keys {
+      UserDefaults.standard.removeObject(forKey: key.description)
     }
-    
-    init() {
-        alarms = getAlarms()
+  }
+  
+  var count: Int {
+    return alarms.count
+  }
+  
+  private func alarmArrayToDictionary(_ alarmsArray:[Alarm]) -> [String:Alarm]{
+    var Dict = [String:Alarm]()
+    for value in alarmsArray
+    {
+      Dict[value.uuid] = value
     }
-    
-    func persist() {
-        ud.set(getAlarmsDictRepresentation(), forKey: persistKey)
-        ud.synchronize()
+    return Dict
+  }
+  
+  //helper, get all alarms from Userdefaults
+  private func getAlarms() -> [String:Alarm] {
+    let array = UserDefaults.standard.array(forKey: persistKey)
+    guard let alarmArray = array else{
+      return [String:Alarm]()
     }
-    
-    func unpersist() {
-        for key in ud.dictionaryRepresentation().keys {
-            UserDefaults.standard.removeObject(forKey: key.description)
-        }
+    if let dicts = alarmArray as? [PropertyReflectable.RepresentationType]{
+      if dicts.first?.count == Alarm.propertyCount {
+        let persistedAlarmsArray = dicts.map{Alarm($0)}
+        return alarmArrayToDictionary(persistedAlarmsArray)
+      }
     }
-    
-    var count: Int {
-        return alarms.count
-    }
-    
-    //helper, get all alarms from Userdefaults
-    private func getAlarms() -> [Alarm] {
-        let array = UserDefaults.standard.array(forKey: persistKey)
-        guard let alarmArray = array else{
-            return [Alarm]()
-        }
-        if let dicts = alarmArray as? [PropertyReflectable.RepresentationType]{
-            if dicts.first?.count == Alarm.propertyCount {
-                return dicts.map{Alarm($0)}
-            }
-        }
-        unpersist()
-        return [Alarm]()
-    }
+    unpersist()
+    return [String:Alarm]()
+  }
 }

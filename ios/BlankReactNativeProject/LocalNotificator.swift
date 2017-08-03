@@ -66,9 +66,9 @@ class LocalNotificator: NSObject {
     return;
   }
   
-  private func createNotification(notificationData: [String: AnyObject]) -> UNNotificationRequest {
-    let notification = UNNotificationRequest()
-    notification.init
+  private func createNotification(notificationData: [String: AnyObject]) -> UILocalNotification {
+    let notification = UILocalNotification()
+    //notification.init
     notification.soundName = UILocalNotificationDefaultSoundName
     notification.alertBody = notificationData["alertBody"] as? String
     notification.alertAction = notificationData["alertAction"] as? String
@@ -108,7 +108,7 @@ class LocalNotificator: NSObject {
       notification.hasAction = (hasAction as? Bool)!
     }
     
-    notification.
+//    notification.
     
     notification.category = "schedulerViewItemCategory"
     

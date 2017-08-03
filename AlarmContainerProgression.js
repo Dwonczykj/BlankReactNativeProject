@@ -4,6 +4,8 @@ import {
   ActivityIndicator,
   DatePickerIOS,
   Platform,
+  NativeModules,
+  NativeEventEmitter,
   StyleSheet,
   Switch,
   Text,
@@ -18,6 +20,7 @@ import newGuid from './Common/Guid';
 import JourneyListContainer from './JourneyListContainer';
 import APIActions from './Actions/fetchRequestActions';
 import * as globals from './Common/globals';
+import MPMediaPlayer from './IOSMediaPlayer/MPMediaPlayer';
 
 import {
   AdMobBanner,
@@ -47,7 +50,8 @@ class AlarmContainerWizard extends React.Component {
       start: null,
       end: null,
       journeyTime: "()",
-      showAd: false
+      showAd: false,
+      showMediaPicker: false
     }
 
     //TODO: create a binder function which takes an array of functions as the parameter.
@@ -112,10 +116,10 @@ class AlarmContainerWizard extends React.Component {
       },
       3000
     );
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
+    // this.timerID = setInterval(
+    //   () => this.tick(),
+    //   1000
+    // );
     this.setState({currentAlarmId: this.state.alarm.id});
 
     // AdMobRewarded.setTestDeviceID('EMULATOR');
@@ -198,6 +202,8 @@ class AlarmContainerWizard extends React.Component {
   // }
 
   addAlarm(){
+    return this.setState({showMediaPicker: true});
+
     let t = this.state.datePickerDate;
     let alarm = this.state.alarm;
     alarm.time = t;
@@ -221,7 +227,23 @@ class AlarmContainerWizard extends React.Component {
         alarm: alarm
       });
     }
-    this.props.actions.editAlarm(alarm);
+
+    // const editAlarmNativeCallBack = (alarmArr) => {
+    //   console.log(alarmArr);
+    //   if(alarmArr)
+    //   {
+    //       let nativeResultAlarm = alarmArr;
+    //       nativeResultAlarm.time = new Date(nativeResultAlarm.time);
+    //       this.props.actions.editAlarm(alarmArr);
+    //   }
+    //   return;
+    // };
+    let isEdit = false;
+    const id = "";
+    alarm.label = "RandomAlarm";
+    return NativeModules.JSAlarmController.saveEditAlarm(id,alarm,isEdit,this.props.actions.editAlarmNativeCallBack);
+    //alarm needs a label,mediaLabel,mediaId,snoozeEnabled,repeatWeekdays
+
     console.log(`alarm added for ${t}`);
   }
 
@@ -586,7 +608,7 @@ class AlarmContainerWizard extends React.Component {
   //make calc journey button readonly unless jounery params are set.
   render(){
     let alarm = this.props.state[this.state.currentAlarmId||(this.props.alarm&&this.props.alarm.id)];
-      return ( !this.props.existingAlarm?
+      return this.state.showMediaPicker? <MPMediaPlayer /> : ( !this.props.existingAlarm?
         (<View
           style={styles.container}
         >
