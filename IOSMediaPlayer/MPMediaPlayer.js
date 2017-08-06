@@ -26,6 +26,7 @@ export default class MPMediaPlayer extends Component {
 
     componentDidMount() {
         // Add Event Listener for SongPlaying event from MediaController
+        debugger;
         const myMPMediaPickerEvnt = new NativeEventEmitter(NativeModules.MediaViewController);
         myMPMediaPickerEvnt.addListener('SongPlaying', (songName) => {
           this.setState({songPlaying : songName});

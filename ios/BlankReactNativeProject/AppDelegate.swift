@@ -132,11 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AVAudioPlayerDelegate /*,
           }
           
           storageController.addAction(stopOption)
-          //        window?.visibleViewController?.navigationController?.present(storageController, animated: true, completion: nil)
           window?.visibleViewController?.present(storageController, animated: true, completion: nil)
         }else{
-//          let jsEventEmitter = JSEventEmitter() //DO NOT INSTANTIATE THE MODULE AS THIS SETS THE BRIDGE TO NIL
-//          jsEventEmitter.tellJSWithBody(/*application: application,*/ SoundName: String("didReceiveLocalNotification")/*,notification: notification*/)
             JSEventEmitter.emitEvent(eventName: "sayHello", eventBody: NotificationToDictionaryTransformer(notification: notification).transform())
 
         }
@@ -150,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AVAudioPlayerDelegate /*,
         var soundName: String = ""
         if let userInfo = notification.userInfo {
             soundName = userInfo["soundName"] as! String
-            id = userInfo["uuid"] as! String
+            id = userInfo["UUID"] as! String
         }
         self.alarmModel = Alarms()
         self.alarmModel.alarms[id]!.onSnooze = false
@@ -159,6 +156,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AVAudioPlayerDelegate /*,
             self.alarmModel.alarms[id]!.onSnooze = true
         }
       //TODO: Emit the update to the JS so that store is up to date
+        JSEventEmitter.emitEvent(eventName: "alarmUpdated", eventBody: AlarmToDictionaryTransformer(alarm: self.alarmModel.alarms[id]!).transform())
         completionHandler()
     }
 //

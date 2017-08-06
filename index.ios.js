@@ -41,15 +41,15 @@ export default class BlankReactNativeProject extends Component {
     });
 
 
-    this.didReceiveLocalNotification = (notification) => {
-        AlertIOS.alert(notification.userInfo.message);
-        this.setState({lastNotification: null});
-    };
+    // this.didReceiveLocalNotification = (notification) => {
+    //     AlertIOS.alert(notification.userInfo.message);
+    //     this.setState({lastNotification: null});
+    // };
     NativeModules.LocalNotificator.testMe("Hey");
     // NativeModules.LocalNotificator.checkPermissions((arr) => console.log(arr));
-    const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
-    myModuleEvnt.addListener('sayHello', (data) => console.log(data));
-    myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
+    // const myModuleEvnt = new NativeEventEmitter(NativeModules.JSEventEmitter);
+    // myModuleEvnt.addListener('sayHello', (data) => console.log(data));
+    // myModuleEvnt.addListener('didReceiveLocalNotification', (data) => this.didReceiveLocalNotification(data))
 
 
     // React.NativeAppEventEmitter.addListener('didReceiveLocalNotification', this.didReceiveLocalNotification);

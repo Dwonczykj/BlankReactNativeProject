@@ -54,6 +54,7 @@
 		D41A51471F29B737005F3D8A /* PropertyReflectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41A51461F29B737005F3D8A /* PropertyReflectable.swift */; };
 		D41A51681F29BC5B005F3D8A /* JSAlarmController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */; };
 		D41A516A1F29BD6B005F3D8A /* JSAlarmControllerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */; };
+		D41AAA521F32FF740082953E /* AlarmToDictionaryTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41AAA511F32FF740082953E /* AlarmToDictionaryTransformer.swift */; };
 		D44F37121F209EA400F065EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37111F209EA400F065EE /* AppDelegate.swift */; };
 		D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */; };
 		D453636B98BE4018B69DAB72 /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AD28EA5A47B4861BF7CC58D /* Ionicons.ttf */; };
@@ -368,6 +369,7 @@
 		D41A51461F29B737005F3D8A /* PropertyReflectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PropertyReflectable.swift; path = BlankReactNativeProject/PropertyReflectable.swift; sourceTree = "<group>"; };
 		D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSAlarmController.swift; sourceTree = "<group>"; };
 		D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSAlarmControllerBridge.m; sourceTree = "<group>"; };
+		D41AAA511F32FF740082953E /* AlarmToDictionaryTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmToDictionaryTransformer.swift; sourceTree = "<group>"; };
 		D44F37101F209EA400F065EE /* BlankReactNativeProject-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "BlankReactNativeProject-Bridging-Header.h"; sourceTree = "<group>"; };
 		D44F37111F209EA400F065EE /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = BlankReactNativeProject/AppDelegate.swift; sourceTree = "<group>"; };
 		D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NotificationToDictionaryTransformer.swift; path = BlankReactNativeProject/NotificationToDictionaryTransformer.swift; sourceTree = "<group>"; };
@@ -532,6 +534,8 @@
 		13B07FAE1A68108700A75B9A /* BlankReactNativeProject */ = {
 			isa = PBXGroup;
 			children = (
+				D41B0AD21F376FB70072DEF4 /* Transformers */,
+				D41B0AB21F376FA00072DEF4 /* AlarmController */,
 				D419BFFE1F304D2E00F967B3 /* MediaNativeController */,
 				D419BFDA1F3048FD00F967B3 /* SupportingFiles */,
 				D48494931F294192001B6A70 /* Alarm */,
@@ -546,7 +550,6 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				D44F37101F209EA400F065EE /* BlankReactNativeProject-Bridging-Header.h */,
-				D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */,
 			);
 			name = BlankReactNativeProject;
 			sourceTree = "<group>";
@@ -698,6 +701,24 @@
 			name = MediaNativeController;
 			sourceTree = "<group>";
 		};
+		D41B0AB21F376FA00072DEF4 /* AlarmController */ = {
+			isa = PBXGroup;
+			children = (
+				D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */,
+				D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */,
+			);
+			name = AlarmController;
+			sourceTree = "<group>";
+		};
+		D41B0AD21F376FB70072DEF4 /* Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				D44F37321F20A44A00F065EE /* NotificationToDictionaryTransformer.swift */,
+				D41AAA511F32FF740082953E /* AlarmToDictionaryTransformer.swift */,
+			);
+			name = Transformers;
+			sourceTree = "<group>";
+		};
 		D41D743A1F27F301003724E9 /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
@@ -722,8 +743,6 @@
 				D48494B51F29428E001B6A70 /* Identifier.swift */,
 				D48494C11F2942C7001B6A70 /* Scheduler.swift */,
 				D44F37111F209EA400F065EE /* AppDelegate.swift */,
-				D41A51671F29BC5B005F3D8A /* JSAlarmController.swift */,
-				D41A51691F29BD6B005F3D8A /* JSAlarmControllerBridge.m */,
 			);
 			name = App;
 			sourceTree = "<group>";
@@ -1532,6 +1551,7 @@
 				D41A51471F29B737005F3D8A /* PropertyReflectable.swift in Sources */,
 				D48494C41F2942EA001B6A70 /* UIWindow+Extension.swift in Sources */,
 				D419C0001F304D6200F967B3 /* MediaViewController.swift in Sources */,
+				D41AAA521F32FF740082953E /* AlarmToDictionaryTransformer.swift in Sources */,
 				D48494B71F29428E001B6A70 /* Identifier.swift in Sources */,
 				D48494B41F294274001B6A70 /* AlarmModel.swift in Sources */,
 				D44F37331F20A44A00F065EE /* NotificationToDictionaryTransformer.swift in Sources */,
