@@ -11,7 +11,7 @@ import MediaPlayer
 import AVKit
 
 @objc(MediaViewController)
-class MediaViewController: NSObject, MPMediaPickerControllerDelegate  {
+class MediaViewController:  NSObject, MPMediaPickerControllerDelegate  {
     
     fileprivate let numberOfRingtones = 2
     var mediaItem: MPMediaItem?

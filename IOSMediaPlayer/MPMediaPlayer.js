@@ -26,14 +26,18 @@ export default class MPMediaPlayer extends Component {
 
     componentDidMount() {
         // Add Event Listener for SongPlaying event from MediaController
-        debugger;
-        const myMPMediaPickerEvnt = new NativeEventEmitter(NativeModules.MediaViewController);
-        myMPMediaPickerEvnt.addListener('SongPlaying', (songName) => {
-          this.setState({songPlaying : songName});
-          console.log(`Song Playing with name ${songName}`);
-        },this);
 
-        debugger;
+        // const myMPMediaPickerEvnt = new NativeEventEmitter(NativeModules.MediaViewController);
+        // Issue is that you can only addListener to a module that has an addListener function.
+        // All modules which implement RCTEventEmitter will have an addListener method.
+        // myMPMediaPickerEvnt.addListener('SongPlaying', (songName) => {
+        //   this.setState({songPlaying : songName});
+        //   console.log(`Song Playing with name ${songName}`);
+        // },this);
+
+        let nativeMod = new NativeEventEmitter(NativeModules.JSEventEmitter);
+        nativeMod.addListener('sayHello',(soundName) => console.log(soundName));
+
 
         // React.NativeAppEventEmitter.addListener('SongPlaying', (songName) => {
         //   this.setState({songPlaying : songName});
