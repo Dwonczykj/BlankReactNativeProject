@@ -239,7 +239,7 @@ class AlarmContainerWizard extends React.Component {
     //   return;
     // };
     let isEdit = false;
-    const id = "";
+    const id = alarm.id;
     alarm.label = "RandomAlarm";
     debugger;
     return NativeModules.JSAlarmController.saveEditAlarm(

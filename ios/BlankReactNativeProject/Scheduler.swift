@@ -122,8 +122,8 @@ class Scheduler : AlarmSchedulerDelegate
         AlarmNotification.category = "myAlarmCategory"
         AlarmNotification.soundName = soundName + ".mp3"
         AlarmNotification.timeZone = TimeZone.current
-        let repeating: Bool = !weekdays.isEmpty
-        AlarmNotification.userInfo = ["snooze" : snoozeEnabled, "index": index, "soundName": soundName, "repeating" : repeating]
+        let repeating: Bool = weekdays.isEmpty ? false : true
+        AlarmNotification.userInfo = ["snooze" : snoozeEnabled, "index": id, "soundName": soundName, "repeating" : repeating, "UUID": id]
         //repeat weekly if repeat weekdays are selected
         //no repeat with snooze notification
         if !weekdays.isEmpty && !onSnooze{
@@ -220,7 +220,7 @@ class Scheduler : AlarmSchedulerDelegate
         var minId = ""
         var minDate: Date = notifications.first!.fireDate!
         for n in notifications {
-            let id = n.userInfo!["uuid"] as! String
+            let id = n.userInfo!["UUID"] as! String
             if(n.fireDate! <= minDate) {
                 minDate = n.fireDate!
                 minId = id
