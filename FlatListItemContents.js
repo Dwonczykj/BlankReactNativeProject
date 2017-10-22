@@ -68,7 +68,6 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
           }}>
               <View style={styles.AlarmDetailContainer}>
                 <Text style={styles.AlarmTimeTime}>
-                    <Text style={{fontSize: 15, fontWeight: '300'}}>{alarm.time.getHours()>11&&alarm.time.getHours()<24?"pm":"am"}</Text>
                     {alarmTime && `${displayClockSectionAs12HourTime(alarmTime.getHours())}:${displayClockSectionAs12HourTime(alarmTime.getMinutes())}`}
                     <Text style={{fontSize: 15, fontWeight: '300'}}>{alarmTime.getHours()>11&&alarmTime.getHours()<24?"pm":"am"}</Text>
                 </Text>
