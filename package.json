@@ -28,7 +28,8 @@
     "redux-devtools-extension": "^2.13.2",
     "redux-offline": "^2.0.0",
     "redux-offline-sauce": "0.0.1",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "stringify-object": "^3.2.1"
   },
   "devDependencies": {
     "babel-jest": "19.0.0",

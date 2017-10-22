@@ -276,7 +276,7 @@ class FlatAlarmList extends React.Component {
     }
 
     render(){
-
+      
       if(this.state.showProgress){
         return (
             <View style={{

@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import FlatListItem from './FlatListItemContents';
 
+import stringifyObject from 'stringify-object';
+
 // class MyListItem extends React.PureComponent {
 //   _onPress = () => {
 //     this.props.onPressItem(this.props.id);
@@ -50,6 +52,7 @@ export default class MyList extends React.PureComponent {
   };
 
   _renderItem = ({item,index}) => {
+
     return (
       <FlatListItem
         id={item.id}
@@ -63,6 +66,11 @@ export default class MyList extends React.PureComponent {
   }
 
   render() {
+    console.warn(stringifyObject(this.props, {
+        indent: '  ',
+        singleQuotes: false
+      })
+    );
     return (
       <FlatList
         data={Object.values(this.props.alarms).sort((alarm1,alarm2) => alarm1.time - alarm2.time)}

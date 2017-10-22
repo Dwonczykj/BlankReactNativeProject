@@ -202,7 +202,7 @@ class AlarmContainerWizard extends React.Component {
   // }
 
   addAlarm(){
-    return this.setState({showMediaPicker: true});
+    // return this.setState({showMediaPicker: true});
 
     let t = this.state.datePickerDate;
     let alarm = this.state.alarm;
@@ -241,7 +241,13 @@ class AlarmContainerWizard extends React.Component {
     let isEdit = false;
     const id = "";
     alarm.label = "RandomAlarm";
-    return NativeModules.JSAlarmController.saveEditAlarm(id,alarm,isEdit,this.props.actions.editAlarmNativeCallBack);
+    debugger;
+    return NativeModules.JSAlarmController.saveEditAlarm(
+      id,
+      alarm,
+      isEdit,
+      this.props.actions.editAlarmNativeCallBack
+    );
     //alarm needs a label,mediaLabel,mediaId,snoozeEnabled,repeatWeekdays
 
     console.log(`alarm added for ${t}`);
@@ -370,7 +376,7 @@ class AlarmContainerWizard extends React.Component {
   finishJourneySetUp(){
     this.calculateJourneyTime();
     // this.setState({showSummary: true});
-    const currentAlarmDate = this.state.alarm.time || new Date.now().setHours(9).setMinutes(0).setSeconds(0).setMilliseconds(0);
+    const currentAlarmDate = this.state.alarm.time || new Date.now().setHours(4).setMinutes(0).setSeconds(0).setMilliseconds(0);
     const journeyTime = this.state.alarm.journey.expectedJourneyLength || 15;
     const noOfMinsToAdd = 30 + journeyTime;
     const newDateObj = new Date(currentAlarmDate.getTime() + noOfMinsToAdd*60000);

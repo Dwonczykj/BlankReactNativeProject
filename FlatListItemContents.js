@@ -31,7 +31,9 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
         return "subway";
     }
   }
-
+  //
+  //
+  let alarmTime = new Date(alarm.time);
   return (
     <TouchableHighlight
         onPress={()=> onPressItem()}
@@ -66,11 +68,12 @@ const item = ({id, alarm, onPressItem, selected, displayClockSectionAs12HourTime
           }}>
               <View style={styles.AlarmDetailContainer}>
                 <Text style={styles.AlarmTimeTime}>
-                    {alarm.time && `${displayClockSectionAs12HourTime(alarm.time.getHours())}:${displayClockSectionAs12HourTime(alarm.time.getMinutes())}`}
                     <Text style={{fontSize: 15, fontWeight: '300'}}>{alarm.time.getHours()>11&&alarm.time.getHours()<24?"pm":"am"}</Text>
+                    {alarmTime && `${displayClockSectionAs12HourTime(alarmTime.getHours())}:${displayClockSectionAs12HourTime(alarmTime.getMinutes())}`}
+                    <Text style={{fontSize: 15, fontWeight: '300'}}>{alarmTime.getHours()>11&&alarmTime.getHours()<24?"pm":"am"}</Text>
                 </Text>
                 <Text style={styles.AlarmDetailElement}>
-                  {alarm.time && `${alarm.time.getDate()}/${alarm.time.getMonth()}/${alarm.time.getFullYear()}`}
+                  {alarmTime && `${alarmTime.getDate()}/${alarmTime.getMonth()}/${alarmTime.getFullYear()}`}
                 </Text>
               </View>
               <View style={styles.AlarmDetailContainer}>

@@ -6,6 +6,7 @@ import reduxImmutableStateInvariant from 'redux-immutable-state-invariant';
 //redux-offline in readme current DOES NOT SUPPORT reduxImmutableStateInvariant stores.
 import { composeWithDevTools } from 'redux-devtools-extension';
 import offlineConfig from 'redux-offline/lib/defaults';
+import persist from 'redux-offline/lib/defaults/persist'
 // import * as Store from './ts/store';
 import reducer from './reducers/index';
 import {fetchAndIncrementCount} from '../AuthService';
@@ -35,15 +36,21 @@ const config = {
   }
 }
 
+const persistOptions = {} // your persist options
+
 export function configureStore(initialState) {
+  let myOLCfg = offlineConfig;
+  // myOLCfg.discard = true;
   const store = createStore(
     reducer,
     initialState,
     composeWithDevTools(
       applyMiddleware(thunk,APIServiceMiddleware),
-      offline(offlineConfig)
+      offline(myOLCfg)
     )
   );
+  //Uncomment line below when want to clean the store.
+  // persist(store).purge();
 
   if (module.hot) {
     module.hot.accept(() => {
